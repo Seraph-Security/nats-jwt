@@ -1,10 +1,10 @@
 # NATS JWT
 
+**NOTE** - This is still a work in progress while at the 0.0.x version
+
 <!-- cargo-sync-readme start -->
 
 Generate JWTs signed using NKEYs for use with [NATS](https://nats.io)
-
-**NOTE** - This is still a work in progress and will be published to crates.io once it's ready.
 
 Supports generating JWTs for Account, User and Activation claims.
 
