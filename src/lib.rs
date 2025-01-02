@@ -15,7 +15,7 @@
 //! let account_keypair = KeyPair::new_account();
 //! let account_signing_key = KeyPair::new_account();
 //! let account: Account = Account::builder()
-//!     .signing_keys(SigningKeys::from(account_signing_key.public_key()))
+//!     .signing_keys(SigningKeys::from(&account_signing_key))
 //!     .try_into()
 //!     .expect("Account to be valid");
 //! let account_token = Token::new(account_keypair.public_key())
@@ -26,8 +26,8 @@
 //!
 //! let user_keypair = KeyPair::new_user();
 //! let user: User = User::builder()
-//!    .pub_(Some(Permission::from(vec!["service.hello.world"])))
-//!    .sub(Some(Permission::from(vec!["_INBOX."])))
+//!    .pub_(Permission::from("service.hello.world"))
+//!    .sub(Permission::from("_INBOX."))
 //!    .subs(10)
 //!    .payload(1024 * 1024) // 1MiB
 //!    .bearer_token(true)
@@ -76,6 +76,12 @@ impl From<&str> for SigningKeys {
     }
 }
 
+impl From<&KeyPair> for SigningKeys {
+    fn from(signing_key: &KeyPair) -> Self {
+        vec![SigningKeysItem::PublicKey(signing_key.public_key())].into()
+    }
+}
+
 impl From<Vec<String>> for Permission {
     fn from(allow: Vec<String>) -> Self {
         Permission::try_from(Permission::builder().allow(Some(allow.into()))).unwrap()
@@ -85,6 +91,19 @@ impl From<Vec<String>> for Permission {
 impl From<Vec<&str>> for Permission {
     fn from(allow: Vec<&str>) -> Self {
         let allow_vec: Vec<String> = allow.iter().map(|s| s.to_string()).collect();
+        Permission::try_from(Permission::builder().allow(Some(allow_vec.into()))).unwrap()
+    }
+}
+
+impl From<String> for Permission {
+    fn from(allow: String) -> Self {
+        Permission::try_from(Permission::builder().allow(Some(vec![allow].into()))).unwrap()
+    }
+}
+
+impl From<&str> for Permission {
+    fn from(allow: &str) -> Self {
+        let allow_vec: Vec<String> = vec![allow.to_string()];
         Permission::try_from(Permission::builder().allow(Some(allow_vec.into()))).unwrap()
     }
 }
@@ -229,5 +248,19 @@ mod tests {
             }
             _ => panic!("Expected Account"),
         }
+
+        let operator_signing_key = KeyPair::new_operator();
+
+        let account_keypair = KeyPair::new_account();
+        let account_signing_key = KeyPair::new_account();
+        let account: Account = Account::builder()
+            .signing_keys(SigningKeys::from(&account_signing_key))
+            .try_into()
+            .expect("Account to be valid");
+        let account_token = Token::new(account_keypair.public_key())
+            .name("My Account")
+            .claims(account)
+            .sign(&operator_signing_key);
+        println!("account_token: {}", account_token);
     }
 }

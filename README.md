@@ -19,7 +19,7 @@ let operator_signing_key = KeyPair::new_operator();
 let account_keypair = KeyPair::new_account();
 let account_signing_key = KeyPair::new_account();
 let account: Account = Account::builder()
-    .signing_keys(SigningKeys::from(account_signing_key.public_key()))
+    .signing_keys(SigningKeys::from(&account_signing_key))
     .try_into()
     .expect("Account to be valid");
 let account_token = Token::new(account_keypair.public_key())
@@ -30,8 +30,8 @@ println!("account_token: {}", account_token);
 
 let user_keypair = KeyPair::new_user();
 let user: User = User::builder()
-   .pub_(Some(Permission::from(vec!["service.hello.world"])))
-   .sub(Some(Permission::from(vec!["_INBOX."])))
+   .pub_(Permission::from("service.hello.world"))
+   .sub(Permission::from("_INBOX."))
    .subs(10)
    .payload(1024 * 1024) // 1MiB
    .bearer_token(true)
