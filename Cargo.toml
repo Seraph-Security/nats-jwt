@@ -2,8 +2,7 @@
 name = "nats-jwt"
 version = "0.0.1"
 edition = "2021"
-publish = ["seraph"]
-exclude = [".gitlab-ci.yml", ".release-plz.toml"]
+exclude = [".gitlab-ci.yml"]
 authors = ["Ryan Sanche <ryan@rj45.ca>", "Steve Graham <stgraham2000@gmail.com>"]
 license = "MIT"
 readme = "README.md"
