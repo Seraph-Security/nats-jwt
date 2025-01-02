@@ -1,5 +1,6 @@
 [package]
 name = "nats-jwt"
+description = "Generate JWTs signed using NKEYs for use with https://nats.io"
 version = "0.0.1"
 edition = "2021"
 exclude = [".gitlab-ci.yml"]
