@@ -1,5 +1,10 @@
 # NATS IO JWT
 
+[![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+[![mirror](https://img.shields.io/badge/mirror-github-blue)](https://github.com/nats-io/jwt)
+[![crates.io](https://img.shields.io/crates/v/nats-io-jwt.svg)](https://crates.io/crates/nats-io-jwt)
+[![docs.rs](https://docs.rs/nats-io-jwt/badge.svg)](https://docs.rs/nats-io-jwt)
+
 This crate is based off of a JSON schema that was initially generated from
 a JSON schema that was generated from v2.7.3 of the golang nats-io jwt library
 at [nats-io/jwt](https://github.com/nats-io/jwt). At the point when this
