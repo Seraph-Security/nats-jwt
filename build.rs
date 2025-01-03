@@ -3,6 +3,11 @@ use std::fs;
 use typify::{TypeSpace, TypeSpaceSettings};
 
 fn main() {
+    if std::env::var("DOCS_RS").is_ok() {
+        // if running on doc_rs the fs wis read only so we won't be able to updatte the schema
+        return;
+    }
+
     let content = std::fs::read_to_string("src/nats_jwt_schema.json").unwrap();
     let schema = serde_json::from_str::<schemars::schema::RootSchema>(&content).unwrap();
 
