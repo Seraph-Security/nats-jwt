@@ -5,6 +5,8 @@
 [![crates.io](https://img.shields.io/crates/v/nats-io-jwt.svg)](https://crates.io/crates/nats-io-jwt)
 [![docs.rs](https://docs.rs/nats-io-jwt/badge.svg)](https://docs.rs/nats-io-jwt)
 
+**NOTE** - This is still a work in progress while at the 0.0.x version
+
 This crate is based off of a JSON schema that was initially generated from
 a JSON schema that was generated from v2.7.3 of the golang nats-io jwt library
 at [nats-io/jwt](https://github.com/nats-io/jwt). At the point when this
@@ -13,8 +15,6 @@ nats.io. The idea was to generate a language agnostic representation of the JWT
 API for nats.io and then generate Rust code from this schema using `typify`.
 Finally a thin wrapper found in `src/lib.rs` was built to provide an interface
 to the generated code.
-
-**NOTE** - This is still a work in progress while at the 0.0.x version
 
 <!-- cargo-sync-readme start -->
 
