@@ -1,7 +1,0 @@
-[clog]
-repository = "https://github.com/clog-tool/clog-cli"
-changelog = "CHANGELOG.md"
-infile = "CHANGELOG.md"
-outfile = "CHANGELOG.md"
-output-format = "markdown"
-from-latest-tag = true
