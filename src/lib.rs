@@ -7,7 +7,7 @@
 //! ## Example
 //!
 //! ```
-//! use nats_jwt::{KeyPair, Token, Account, User, Permission, SigningKeys};
+//! use nats_io_jwt::{KeyPair, Token, Account, User, Permission, SigningKeys};
 //!
 //! // You would probably load the operator's seed via a config and use KeyPair::from_seed
 //! let operator_signing_key = KeyPair::new_operator();

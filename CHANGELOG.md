@@ -19,9 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add conversions for single &str and String to Permission
 - Initial version
 - Initial commit
-<a name=""></a>
-##   (2025-01-02)
-
 
 
 
