@@ -14,8 +14,22 @@ fn main() {
     let mut type_space = TypeSpace::new(TypeSpaceSettings::default().with_struct_builder(true));
     type_space.add_root_schema(schema).unwrap();
 
-    let contents =
-        prettyplease::unparse(&syn::parse2::<syn::File>(type_space.to_stream()).unwrap());
+    let mut contents = String::from(
+        r#"#![allow(unknown_lints)]
+#![allow(clippy::all)]
+
+    "#,
+    );
+
+    contents.push_str(&prettyplease::unparse(
+        &syn::parse2::<syn::File>(type_space.to_stream()).unwrap(),
+    ));
 
     fs::write("src/nats_jwt_schema.rs", contents).unwrap();
+
+    // run "cargo fmt"
+    std::process::Command::new("cargo")
+        .arg("fmt")
+        .status()
+        .expect("failed to run cargo fmt");
 }
