@@ -8,8 +8,8 @@
 **NOTE** - This is still a work in progress while at the 0.0.x version
 
 This crate is based off of a JSON schema that was initially generated from
-a JSON schema that was generated from v2.7.3 of the golang nats-io jwt library
-at [nats-io/jwt](https://github.com/nats-io/jwt). At the point when this
+v2.7.3 of the golang nats-io jwt library at
+[nats-io/jwt](https://github.com/nats-io/jwt). At the point when this
 crate was built, this was the most up-to-date supported library in use for
 nats.io. The idea was to generate a language agnostic representation of the JWT
 API for nats.io and then generate Rust code from this schema using `typify`.
