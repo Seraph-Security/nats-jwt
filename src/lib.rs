@@ -62,6 +62,8 @@ pub use nats_jwt_schema::*;
 /// Re-export some `KeyPair` things from the nkeys crate.
 pub use nkeys::{decode_seed, from_public_key, KeyPair, KeyPairType};
 
+abc
+
 const JWT_HEADER: &str = r#"{"typ":"JWT","alg":"ed25519-nkey"}"#;
 
 impl From<String> for SigningKeys {
