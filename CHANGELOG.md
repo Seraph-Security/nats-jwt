@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5](https://github.com/Seraph-Security/nats-jwt/compare/v0.0.4...v0.0.5) - 2025-01-03
+
+### Other
+
+- Final CI release test
+
 ## [0.0.4](https://github.com/Seraph-Security/nats-jwt/compare/v0.0.3...v0.0.4) - 2025-01-03
 
 ### Other
