@@ -1,5 +1,5 @@
 {
-    "$id": "https://seraphsec.org/nats_jwt_schema.json",
+    "$id": "https://github.com/Seraph-Security/nats-jwt/blob/main/src/nats_jwt_schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$defs": {
         "Account": {

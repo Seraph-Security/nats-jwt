@@ -1264,7 +1264,7 @@ impl ::std::convert::From<::std::collections::HashMap<::std::string::String, Jet
 ///
 /// ```json
 ///{
-///  "$id": "https://seraphsec.org/nats_jwt_schema.json",
+///  "$id": "https://github.com/Seraph-Security/nats-jwt/blob/main/src/nats_jwt_schema.json",
 ///  "title": "Jwt",
 ///  "description": "The Claims portion of a NATS JWT authorization token.",
 ///  "type": "object",
