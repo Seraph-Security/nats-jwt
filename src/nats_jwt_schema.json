@@ -15,8 +15,7 @@
                     "type": "object",
                     "properties": {
                         "type": {
-                            "type": "string",
-                            "description": "Indicates account claims.",
+                            "$ref": "#/$defs/ClaimsType",
                             "const": "account",
                             "default": "account"
                         },
@@ -74,9 +73,9 @@
                     "type": "object",
                     "properties": {
                         "type": {
-                            "type": "string",
-                            "description": "Indicates activation claims.",
-                            "const": "activation"
+                            "$ref": "#/$defs/ClaimsType",
+                            "const": "activation",
+                            "default": "activation"
                         },
                         "issuer_account": {
                             "type": "string",
@@ -119,6 +118,14 @@
                     "$ref": "#/$defs/Activation",
                     "description": "Activation-specific data."
                 }
+            ]
+        },
+        "ClaimsType": {
+            "description": "The type of the claims.",
+            "enum": [
+                "account",
+                "activation",
+                "user"
             ]
         },
         "ClusterTraffic": {
@@ -671,8 +678,7 @@
                     "type": "object",
                     "properties": {
                         "type": {
-                            "type": "string",
-                            "description": "Indicates user claims.",
+                            "$ref": "#/$defs/ClaimsType",
                             "const": "user",
                             "default": "user"
                         },

@@ -85,10 +85,9 @@ pub mod error {
 ///          "$ref": "#/$defs/MsgTrace"
 ///        },
 ///        "type": {
-///          "description": "Indicates account claims.",
 ///          "default": "account",
-///          "type": "string",
-///          "const": "account"
+///          "const": "account",
+///          "$ref": "#/$defs/ClaimsType"
 ///        }
 ///      }
 ///    }
@@ -137,9 +136,8 @@ pub struct Account {
     ///Distributed message tracing configuration for this account.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub trace: ::std::option::Option<MsgTrace>,
-    ///Indicates account claims.
     #[serde(rename = "type", default = "defaults::account_type")]
-    pub type_: ::std::string::String,
+    pub type_: AccountType,
     ///The version of the claim.
     #[serde(default = "defaults::default_u64::<i64, 2>")]
     pub version: i64,
@@ -261,6 +259,82 @@ impl AccountLimits {
         Default::default()
     }
 }
+///AccountType
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "enum": [
+///    "account"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum AccountType {
+    #[serde(rename = "account")]
+    Account,
+}
+impl ::std::convert::From<&Self> for AccountType {
+    fn from(value: &AccountType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for AccountType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Account => write!(f, "account"),
+        }
+    }
+}
+impl ::std::str::FromStr for AccountType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "account" => Ok(Self::Account),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for AccountType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for AccountType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for AccountType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::default::Default for AccountType {
+    fn default() -> Self {
+        AccountType::Account
+    }
+}
 ///Defines the custom parts of an activation claim, including the imported subject and its type (stream/service).
 ///
 /// <details><summary>JSON schema</summary>
@@ -288,9 +362,9 @@ impl AccountLimits {
 ///          "$ref": "#/$defs/Subject"
 ///        },
 ///        "type": {
-///          "description": "Indicates activation claims.",
-///          "type": "string",
-///          "const": "activation"
+///          "default": "activation",
+///          "const": "activation",
+///          "$ref": "#/$defs/ClaimsType"
 ///        }
 ///      }
 ///    }
@@ -312,13 +386,8 @@ pub struct Activation {
     ///Tags used to categorize or label this entity.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub tags: ::std::option::Option<TagList>,
-    ///Indicates activation claims.
-    #[serde(
-        rename = "type",
-        default,
-        skip_serializing_if = "::std::option::Option::is_none"
-    )]
-    pub type_: ::std::option::Option<::std::string::String>,
+    #[serde(rename = "type", default = "defaults::activation_type")]
+    pub type_: ActivationType,
     ///The version of the claim.
     #[serde(default = "defaults::default_u64::<i64, 2>")]
     pub version: i64,
@@ -335,7 +404,7 @@ impl ::std::default::Default for Activation {
             kind: Default::default(),
             subject: Default::default(),
             tags: Default::default(),
-            type_: Default::default(),
+            type_: defaults::activation_type(),
             version: defaults::default_u64::<i64, 2>(),
         }
     }
@@ -343,6 +412,82 @@ impl ::std::default::Default for Activation {
 impl Activation {
     pub fn builder() -> builder::Activation {
         Default::default()
+    }
+}
+///ActivationType
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "enum": [
+///    "activation"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum ActivationType {
+    #[serde(rename = "activation")]
+    Activation,
+}
+impl ::std::convert::From<&Self> for ActivationType {
+    fn from(value: &ActivationType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for ActivationType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Activation => write!(f, "activation"),
+        }
+    }
+}
+impl ::std::str::FromStr for ActivationType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "activation" => Ok(Self::Activation),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for ActivationType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for ActivationType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for ActivationType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::default::Default for ActivationType {
+    fn default() -> Self {
+        ActivationType::Activation
     }
 }
 ///A list of CIDR-notation addresses for restricting access based on IP ranges.
@@ -435,6 +580,88 @@ impl ::std::convert::From<Account> for Claims {
 impl ::std::convert::From<Activation> for Claims {
     fn from(value: Activation) -> Self {
         Self::Activation(value)
+    }
+}
+///The type of the claims.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "The type of the claims.",
+///  "enum": [
+///    "account",
+///    "activation",
+///    "user"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum ClaimsType {
+    #[serde(rename = "account")]
+    Account,
+    #[serde(rename = "activation")]
+    Activation,
+    #[serde(rename = "user")]
+    User,
+}
+impl ::std::convert::From<&Self> for ClaimsType {
+    fn from(value: &ClaimsType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for ClaimsType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Account => write!(f, "account"),
+            Self::Activation => write!(f, "activation"),
+            Self::User => write!(f, "user"),
+        }
+    }
+}
+impl ::std::str::FromStr for ClaimsType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "account" => Ok(Self::Account),
+            "activation" => Ok(Self::Activation),
+            "user" => Ok(Self::User),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for ClaimsType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for ClaimsType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for ClaimsType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
     }
 }
 ///Represents how cluster traffic should be handled. Allowed values are empty (no special handling), 'system' (use system accounts), or 'owner' (use owner accounts).
@@ -2768,10 +2995,9 @@ impl TimeRange {
 ///          "type": "string"
 ///        },
 ///        "type": {
-///          "description": "Indicates user claims.",
 ///          "default": "user",
-///          "type": "string",
-///          "const": "user"
+///          "const": "user",
+///          "$ref": "#/$defs/ClaimsType"
 ///        }
 ///      }
 ///    }
@@ -2824,9 +3050,8 @@ pub struct User {
     ///Timezone location for the times list.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub times_location: ::std::option::Option<::std::string::String>,
-    ///Indicates user claims.
     #[serde(rename = "type", default = "defaults::user_type")]
-    pub type_: ::std::string::String,
+    pub type_: UserType,
     ///The version of the claim.
     #[serde(default = "defaults::default_u64::<i64, 2>")]
     pub version: i64,
@@ -3098,6 +3323,82 @@ impl UserScope {
         Default::default()
     }
 }
+///UserType
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "enum": [
+///    "user"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum UserType {
+    #[serde(rename = "user")]
+    User,
+}
+impl ::std::convert::From<&Self> for UserType {
+    fn from(value: &UserType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for UserType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::User => write!(f, "user"),
+        }
+    }
+}
+impl ::std::str::FromStr for UserType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "user" => Ok(Self::User),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for UserType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for UserType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for UserType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::default::Default for UserType {
+    fn default() -> Self {
+        UserType::User
+    }
+}
 ///Defines a single weighted mapping target with a subject, optional weight, and optional cluster.
 ///
 /// <details><summary>JSON schema</summary>
@@ -3198,7 +3499,7 @@ pub mod builder {
             ::std::result::Result<::std::option::Option<super::SigningKeys>, ::std::string::String>,
         tags: ::std::result::Result<::std::option::Option<super::TagList>, ::std::string::String>,
         trace: ::std::result::Result<::std::option::Option<super::MsgTrace>, ::std::string::String>,
-        type_: ::std::result::Result<::std::string::String, ::std::string::String>,
+        type_: ::std::result::Result<super::AccountType, ::std::string::String>,
         version: ::std::result::Result<i64, ::std::string::String>,
     }
     impl ::std::default::Default for Account {
@@ -3358,7 +3659,7 @@ pub mod builder {
         }
         pub fn type_<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::string::String>,
+            T: ::std::convert::TryInto<super::AccountType>,
             T::Error: ::std::fmt::Display,
         {
             self.type_ = value
@@ -3541,10 +3842,7 @@ pub mod builder {
         subject:
             ::std::result::Result<::std::option::Option<super::Subject>, ::std::string::String>,
         tags: ::std::result::Result<::std::option::Option<super::TagList>, ::std::string::String>,
-        type_: ::std::result::Result<
-            ::std::option::Option<::std::string::String>,
-            ::std::string::String,
-        >,
+        type_: ::std::result::Result<super::ActivationType, ::std::string::String>,
         version: ::std::result::Result<i64, ::std::string::String>,
     }
     impl ::std::default::Default for Activation {
@@ -3554,7 +3852,7 @@ pub mod builder {
                 kind: Ok(Default::default()),
                 subject: Ok(Default::default()),
                 tags: Ok(Default::default()),
-                type_: Ok(Default::default()),
+                type_: Ok(super::defaults::activation_type()),
                 version: Ok(super::defaults::default_u64::<i64, 2>()),
             }
         }
@@ -3602,7 +3900,7 @@ pub mod builder {
         }
         pub fn type_<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T: ::std::convert::TryInto<super::ActivationType>,
             T::Error: ::std::fmt::Display,
         {
             self.type_ = value
@@ -5378,7 +5676,7 @@ pub mod builder {
             ::std::option::Option<::std::string::String>,
             ::std::string::String,
         >,
-        type_: ::std::result::Result<::std::string::String, ::std::string::String>,
+        type_: ::std::result::Result<super::UserType, ::std::string::String>,
         version: ::std::result::Result<i64, ::std::string::String>,
     }
     impl ::std::default::Default for User {
@@ -5538,7 +5836,7 @@ pub mod builder {
         }
         pub fn type_<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::string::String>,
+            T: ::std::convert::TryInto<super::UserType>,
             T::Error: ::std::fmt::Display,
         {
             self.type_ = value
@@ -6062,11 +6360,14 @@ pub mod defaults {
     {
         T::try_from(V).unwrap()
     }
-    pub(super) fn account_type() -> ::std::string::String {
-        "account".to_string()
+    pub(super) fn account_type() -> super::AccountType {
+        super::AccountType::Account
     }
-    pub(super) fn user_type() -> ::std::string::String {
-        "user".to_string()
+    pub(super) fn activation_type() -> super::ActivationType {
+        super::ActivationType::Activation
+    }
+    pub(super) fn user_type() -> super::UserType {
+        super::UserType::User
     }
     pub(super) fn user_scope_kind() -> super::ScopeType {
         super::ScopeType::UserScope
