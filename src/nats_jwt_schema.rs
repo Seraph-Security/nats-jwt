@@ -34,80 +34,68 @@ pub mod error {
 /// ```json
 ///{
 ///  "description": "Represents the core configuration of an account, including imports, exports, limits, signing keys, default permissions, mappings, external auth, and more.",
-///  "type": "object",
-///  "properties": {
-///    "authorization": {
-///      "description": "Configuration for external authorization callouts.",
-///      "$ref": "#/$defs/ExternalAuthorization"
+///  "allOf": [
+///    {
+///      "$ref": "#/$defs/Info"
 ///    },
-///    "cluster_traffic": {
-///      "description": "Indicates how cluster traffic is handled by this account. Can be 'system' or 'owner'.",
-///      "$ref": "#/$defs/ClusterTraffic"
+///    {
+///      "$ref": "#/$defs/GenericFields"
 ///    },
-///    "default_permissions": {
-///      "description": "Default permissions applied to users of this account if no user-specific permissions are provided.",
-///      "$ref": "#/$defs/Permissions"
-///    },
-///    "description": {
-///      "description": "A description providing more detail about this account.",
-///      "type": "string"
-///    },
-///    "exports": {
-///      "description": "Subjects exported from this account.",
-///      "$ref": "#/$defs/Exports"
-///    },
-///    "imports": {
-///      "description": "Subjects imported from other accounts.",
-///      "$ref": "#/$defs/Imports"
-///    },
-///    "info_url": {
-///      "description": "A URL with more information about this account.",
-///      "type": "string"
-///    },
-///    "limits": {
-///      "description": "Limits that apply to this account, including operator-level, NATS, and JetStream constraints.",
-///      "$ref": "#/$defs/OperatorLimits"
-///    },
-///    "mappings": {
-///      "description": "Subject mappings that redirect or distribute messages from one subject to others.",
-///      "$ref": "#/$defs/Mapping"
-///    },
-///    "revocations": {
-///      "description": "A list of revoked user or account keys associated with this account.",
-///      "$ref": "#/$defs/RevocationList"
-///    },
-///    "signing_keys": {
-///      "description": "Keys authorized to sign user JWTs on behalf of this account, along with their scopes.",
-///      "$ref": "#/$defs/SigningKeys"
-///    },
-///    "tags": {
-///      "description": "Tags used to categorize or label this entity.",
-///      "$ref": "#/$defs/TagList",
-///      "$comment": "From GenericFields in the Go code."
-///    },
-///    "trace": {
-///      "description": "Distributed message tracing configuration for this account.",
-///      "$ref": "#/$defs/MsgTrace"
-///    },
-///    "type": {
-///      "description": "Indicates account claims.",
-///      "default": "account",
-///      "type": "string",
-///      "const": "account"
-///    },
-///    "version": {
-///      "description": "The version of the claim or issuing library.",
-///      "default": 2,
-///      "type": "integer",
-///      "$comment": "From GenericFields in the Go code."
+///    {
+///      "type": "object",
+///      "properties": {
+///        "authorization": {
+///          "description": "Configuration for external authorization callouts.",
+///          "$ref": "#/$defs/ExternalAuthorization"
+///        },
+///        "cluster_traffic": {
+///          "description": "Indicates how cluster traffic is handled by this account. Can be 'system' or 'owner'.",
+///          "$ref": "#/$defs/ClusterTraffic"
+///        },
+///        "default_permissions": {
+///          "description": "Default permissions applied to users of this account if no user-specific permissions are provided.",
+///          "$ref": "#/$defs/Permissions"
+///        },
+///        "exports": {
+///          "description": "Subjects exported from this account.",
+///          "$ref": "#/$defs/Exports"
+///        },
+///        "imports": {
+///          "description": "Subjects imported from other accounts.",
+///          "$ref": "#/$defs/Imports"
+///        },
+///        "limits": {
+///          "description": "Limits that apply to this account, including operator-level, NATS, and JetStream constraints.",
+///          "$ref": "#/$defs/OperatorLimits"
+///        },
+///        "mappings": {
+///          "description": "Subject mappings that redirect or distribute messages from one subject to others.",
+///          "$ref": "#/$defs/Mapping"
+///        },
+///        "revocations": {
+///          "description": "A list of revoked user or account keys associated with this account.",
+///          "$ref": "#/$defs/RevocationList"
+///        },
+///        "signing_keys": {
+///          "description": "Keys authorized to sign user JWTs on behalf of this account, along with their scopes.",
+///          "$ref": "#/$defs/SigningKeys"
+///        },
+///        "trace": {
+///          "description": "Distributed message tracing configuration for this account.",
+///          "$ref": "#/$defs/MsgTrace"
+///        },
+///        "type": {
+///          "default": "account",
+///          "const": "account",
+///          "$ref": "#/$defs/ClaimsType"
+///        }
+///      }
 ///    }
-///  },
-///  "additionalProperties": false
+///  ]
 ///}
 /// ```
 /// </details>
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-#[serde(deny_unknown_fields)]
 pub struct Account {
     ///Configuration for external authorization callouts.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
@@ -118,7 +106,7 @@ pub struct Account {
     ///Default permissions applied to users of this account if no user-specific permissions are provided.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub default_permissions: ::std::option::Option<Permissions>,
-    ///A description providing more detail about this account.
+    ///A more detailed description.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub description: ::std::option::Option<::std::string::String>,
     ///Subjects exported from this account.
@@ -127,7 +115,7 @@ pub struct Account {
     ///Subjects imported from other accounts.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub imports: ::std::option::Option<Imports>,
-    ///A URL with more information about this account.
+    ///URL to find extra info.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub info_url: ::std::option::Option<::std::string::String>,
     ///Limits that apply to this account, including operator-level, NATS, and JetStream constraints.
@@ -148,10 +136,9 @@ pub struct Account {
     ///Distributed message tracing configuration for this account.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub trace: ::std::option::Option<MsgTrace>,
-    ///Indicates account claims.
     #[serde(rename = "type", default = "defaults::account_type")]
-    pub type_: ::std::string::String,
-    ///The version of the claim or issuing library.
+    pub type_: AccountType,
+    ///The version of the claim.
     #[serde(default = "defaults::default_u64::<i64, 2>")]
     pub version: i64,
 }
@@ -272,6 +259,82 @@ impl AccountLimits {
         Default::default()
     }
 }
+///AccountType
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "enum": [
+///    "account"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum AccountType {
+    #[serde(rename = "account")]
+    Account,
+}
+impl ::std::convert::From<&Self> for AccountType {
+    fn from(value: &AccountType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for AccountType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Account => write!(f, "account"),
+        }
+    }
+}
+impl ::std::str::FromStr for AccountType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "account" => Ok(Self::Account),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for AccountType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for AccountType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for AccountType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::default::Default for AccountType {
+    fn default() -> Self {
+        AccountType::Account
+    }
+}
 ///Defines the custom parts of an activation claim, including the imported subject and its type (stream/service).
 ///
 /// <details><summary>JSON schema</summary>
@@ -279,43 +342,37 @@ impl AccountLimits {
 /// ```json
 ///{
 ///  "description": "Defines the custom parts of an activation claim, including the imported subject and its type (stream/service).",
-///  "type": "object",
-///  "properties": {
-///    "issuer_account": {
-///      "description": "The account public key that issued this activation (if signing key used).",
-///      "type": "string"
+///  "allOf": [
+///    {
+///      "$ref": "#/$defs/GenericFields"
 ///    },
-///    "kind": {
-///      "description": "The type of import the activation is for, either 'stream' or 'service'.",
-///      "$ref": "#/$defs/ExportType"
-///    },
-///    "subject": {
-///      "description": "The subject to which the activation applies.",
-///      "$ref": "#/$defs/Subject"
-///    },
-///    "tags": {
-///      "description": "Tags used to categorize or label this entity.",
-///      "$ref": "#/$defs/TagList",
-///      "$comment": "From GenericFields in the Go code."
-///    },
-///    "type": {
-///      "description": "Indicates activation claims.",
-///      "type": "string",
-///      "const": "activation"
-///    },
-///    "version": {
-///      "description": "The version of the claim or issuing library.",
-///      "default": 2,
-///      "type": "integer",
-///      "$comment": "From GenericFields in the Go code."
+///    {
+///      "type": "object",
+///      "properties": {
+///        "issuer_account": {
+///          "description": "The account public key that issued this activation (if signing key used).",
+///          "type": "string"
+///        },
+///        "kind": {
+///          "description": "The type of import the activation is for, either 'stream' or 'service'.",
+///          "$ref": "#/$defs/ExportType"
+///        },
+///        "subject": {
+///          "description": "The subject to which the activation applies.",
+///          "$ref": "#/$defs/Subject"
+///        },
+///        "type": {
+///          "default": "activation",
+///          "const": "activation",
+///          "$ref": "#/$defs/ClaimsType"
+///        }
+///      }
 ///    }
-///  },
-///  "additionalProperties": false
+///  ]
 ///}
 /// ```
 /// </details>
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-#[serde(deny_unknown_fields)]
 pub struct Activation {
     ///The account public key that issued this activation (if signing key used).
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
@@ -329,14 +386,9 @@ pub struct Activation {
     ///Tags used to categorize or label this entity.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub tags: ::std::option::Option<TagList>,
-    ///Indicates activation claims.
-    #[serde(
-        rename = "type",
-        default,
-        skip_serializing_if = "::std::option::Option::is_none"
-    )]
-    pub type_: ::std::option::Option<::std::string::String>,
-    ///The version of the claim or issuing library.
+    #[serde(rename = "type", default = "defaults::activation_type")]
+    pub type_: ActivationType,
+    ///The version of the claim.
     #[serde(default = "defaults::default_u64::<i64, 2>")]
     pub version: i64,
 }
@@ -352,7 +404,7 @@ impl ::std::default::Default for Activation {
             kind: Default::default(),
             subject: Default::default(),
             tags: Default::default(),
-            type_: Default::default(),
+            type_: defaults::activation_type(),
             version: defaults::default_u64::<i64, 2>(),
         }
     }
@@ -360,6 +412,82 @@ impl ::std::default::Default for Activation {
 impl Activation {
     pub fn builder() -> builder::Activation {
         Default::default()
+    }
+}
+///ActivationType
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "enum": [
+///    "activation"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum ActivationType {
+    #[serde(rename = "activation")]
+    Activation,
+}
+impl ::std::convert::From<&Self> for ActivationType {
+    fn from(value: &ActivationType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for ActivationType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Activation => write!(f, "activation"),
+        }
+    }
+}
+impl ::std::str::FromStr for ActivationType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "activation" => Ok(Self::Activation),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for ActivationType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for ActivationType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for ActivationType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::default::Default for ActivationType {
+    fn default() -> Self {
+        ActivationType::Activation
     }
 }
 ///A list of CIDR-notation addresses for restricting access based on IP ranges.
@@ -452,6 +580,88 @@ impl ::std::convert::From<Account> for Claims {
 impl ::std::convert::From<Activation> for Claims {
     fn from(value: Activation) -> Self {
         Self::Activation(value)
+    }
+}
+///The type of the claims.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "The type of the claims.",
+///  "enum": [
+///    "account",
+///    "activation",
+///    "user"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum ClaimsType {
+    #[serde(rename = "account")]
+    Account,
+    #[serde(rename = "activation")]
+    Activation,
+    #[serde(rename = "user")]
+    User,
+}
+impl ::std::convert::From<&Self> for ClaimsType {
+    fn from(value: &ClaimsType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for ClaimsType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Account => write!(f, "account"),
+            Self::Activation => write!(f, "activation"),
+            Self::User => write!(f, "user"),
+        }
+    }
+}
+impl ::std::str::FromStr for ClaimsType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "account" => Ok(Self::Account),
+            "activation" => Ok(Self::Activation),
+            "user" => Ok(Self::User),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for ClaimsType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for ClaimsType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for ClaimsType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
     }
 }
 ///Represents how cluster traffic should be handled. Allowed values are empty (no special handling), 'system' (use system accounts), or 'owner' (use owner accounts).
@@ -647,68 +857,65 @@ impl ::std::convert::TryFrom<::std::string::String> for ConnectionType {
 /// ```json
 ///{
 ///  "description": "Represents an export that allows other accounts to import subjects from this account, possibly requiring tokens.",
-///  "type": "object",
-///  "properties": {
-///    "account_token_position": {
-///      "description": "If set, references the position of an account token in a wildcard subject (public exports only).",
-///      "type": "integer"
+///  "allOf": [
+///    {
+///      "$ref": "#/$defs/Info"
 ///    },
-///    "advertise": {
-///      "description": "Indicates if this export should be advertised to other accounts.",
-///      "type": "boolean"
-///    },
-///    "allow_trace": {
-///      "description": "Allows message tracing if this is a service export.",
-///      "type": "boolean"
-///    },
-///    "description": {
-///      "description": "A textual description providing more details about this export.",
-///      "type": "string"
-///    },
-///    "info_url": {
-///      "description": "A URL with additional information about this export.",
-///      "type": "string"
-///    },
-///    "name": {
-///      "description": "A human-readable name for this export.",
-///      "type": "string"
-///    },
-///    "response_threshold": {
-///      "description": "The response threshold in nanoseconds, valid only for services.",
-///      "type": "integer"
-///    },
-///    "response_type": {
-///      "description": "The type of response pattern for a service export.",
-///      "$ref": "#/$defs/ResponseType"
-///    },
-///    "revocations": {
-///      "description": "A list of revocations for previously issued activations.",
-///      "$ref": "#/$defs/RevocationList"
-///    },
-///    "service_latency": {
-///      "description": "Configures latency tracking for services.",
-///      "$ref": "#/$defs/ServiceLatency"
-///    },
-///    "subject": {
-///      "description": "The subject being exported.",
-///      "$ref": "#/$defs/Subject"
-///    },
-///    "token_req": {
-///      "description": "Indicates if an activation token is required for imports.",
-///      "default": false,
-///      "type": "boolean"
-///    },
-///    "type": {
-///      "description": "The type of export, either 'stream' or 'service'.",
-///      "$ref": "#/$defs/ExportType"
+///    {
+///      "type": "object",
+///      "properties": {
+///        "account_token_position": {
+///          "description": "If set, references the position of an account token in a wildcard subject (public exports only).",
+///          "type": "integer"
+///        },
+///        "advertise": {
+///          "description": "Indicates if this export should be advertised to other accounts.",
+///          "type": "boolean"
+///        },
+///        "allow_trace": {
+///          "description": "Allows message tracing if this is a service export.",
+///          "type": "boolean"
+///        },
+///        "name": {
+///          "description": "A human-readable name for this export.",
+///          "type": "string"
+///        },
+///        "response_threshold": {
+///          "description": "The response threshold in nanoseconds, valid only for services.",
+///          "type": "integer"
+///        },
+///        "response_type": {
+///          "description": "The type of response pattern for a service export.",
+///          "$ref": "#/$defs/ResponseType"
+///        },
+///        "revocations": {
+///          "description": "A list of revocations for previously issued activations.",
+///          "$ref": "#/$defs/RevocationList"
+///        },
+///        "service_latency": {
+///          "description": "Configures latency tracking for services.",
+///          "$ref": "#/$defs/ServiceLatency"
+///        },
+///        "subject": {
+///          "description": "The subject being exported.",
+///          "$ref": "#/$defs/Subject"
+///        },
+///        "token_req": {
+///          "description": "Indicates if an activation token is required for imports.",
+///          "default": false,
+///          "type": "boolean"
+///        },
+///        "type": {
+///          "description": "The type of export, either 'stream' or 'service'.",
+///          "$ref": "#/$defs/ExportType"
+///        }
+///      }
 ///    }
-///  },
-///  "additionalProperties": false
+///  ]
 ///}
 /// ```
 /// </details>
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-#[serde(deny_unknown_fields)]
 pub struct Export {
     ///If set, references the position of an account token in a wildcard subject (public exports only).
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
@@ -719,10 +926,10 @@ pub struct Export {
     ///Allows message tracing if this is a service export.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub allow_trace: ::std::option::Option<bool>,
-    ///A textual description providing more details about this export.
+    ///A more detailed description.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub description: ::std::option::Option<::std::string::String>,
-    ///A URL with additional information about this export.
+    ///URL to find extra info.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub info_url: ::std::option::Option<::std::string::String>,
     ///A human-readable name for this export.
@@ -962,6 +1169,56 @@ impl ExternalAuthorization {
         Default::default()
     }
 }
+///Generic fields shared by multiple kinds of claims.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "Generic fields shared by multiple kinds of claims.",
+///  "type": "object",
+///  "properties": {
+///    "tags": {
+///      "description": "Tags used to categorize or label this entity.",
+///      "$ref": "#/$defs/TagList"
+///    },
+///    "version": {
+///      "description": "The version of the claim.",
+///      "default": 2,
+///      "type": "integer"
+///    }
+///  },
+///  "$comment": "NOTE: type field omitted as it's const depending on the implementing entity."
+///}
+/// ```
+/// </details>
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+pub struct GenericFields {
+    ///Tags used to categorize or label this entity.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub tags: ::std::option::Option<TagList>,
+    ///The version of the claim.
+    #[serde(default = "defaults::default_u64::<i64, 2>")]
+    pub version: i64,
+}
+impl ::std::convert::From<&GenericFields> for GenericFields {
+    fn from(value: &GenericFields) -> Self {
+        value.clone()
+    }
+}
+impl ::std::default::Default for GenericFields {
+    fn default() -> Self {
+        Self {
+            tags: Default::default(),
+            version: defaults::default_u64::<i64, 2>(),
+        }
+    }
+}
+impl GenericFields {
+    pub fn builder() -> builder::GenericFields {
+        Default::default()
+    }
+}
 ///Represents a mapping (import) from another account's subject space into this account.
 ///
 /// <details><summary>JSON schema</summary>
@@ -1108,6 +1365,54 @@ impl ::std::convert::From<&Imports> for Imports {
 impl ::std::convert::From<::std::vec::Vec<Import>> for Imports {
     fn from(value: ::std::vec::Vec<Import>) -> Self {
         Self(value)
+    }
+}
+///Generic extra Info.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "Generic extra Info.",
+///  "type": "object",
+///  "properties": {
+///    "description": {
+///      "description": "A more detailed description.",
+///      "type": "string"
+///    },
+///    "info_url": {
+///      "description": "URL to find extra info.",
+///      "type": "string"
+///    }
+///  }
+///}
+/// ```
+/// </details>
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+pub struct Info {
+    ///A more detailed description.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub description: ::std::option::Option<::std::string::String>,
+    ///URL to find extra info.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub info_url: ::std::option::Option<::std::string::String>,
+}
+impl ::std::convert::From<&Info> for Info {
+    fn from(value: &Info) -> Self {
+        value.clone()
+    }
+}
+impl ::std::default::Default for Info {
+    fn default() -> Self {
+        Self {
+            description: Default::default(),
+            info_url: Default::default(),
+        }
+    }
+}
+impl Info {
+    pub fn builder() -> builder::Info {
+        Default::default()
     }
 }
 ///Defines JetStream resource limits for memory, disk, streams, consumers, and other constraints.
@@ -1264,7 +1569,7 @@ impl ::std::convert::From<::std::collections::HashMap<::std::string::String, Jet
 ///
 /// ```json
 ///{
-///  "$id": "https://seraphsec.org/nats_jwt_schema.json",
+///  "$id": "https://github.com/Seraph-Security/nats-jwt/blob/main/src/nats_jwt_schema.json",
 ///  "title": "Jwt",
 ///  "description": "The Claims portion of a NATS JWT authorization token.",
 ///  "type": "object",
@@ -1350,6 +1655,67 @@ impl ::std::convert::From<&Jwt> for Jwt {
 }
 impl Jwt {
     pub fn builder() -> builder::Jwt {
+        Default::default()
+    }
+}
+///The limits for Users including generic NatsLimits and User specific UserLimits
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "The limits for Users including generic NatsLimits and User specific UserLimits",
+///  "allOf": [
+///    {
+///      "$ref": "#/$defs/UserLimits"
+///    },
+///    {
+///      "$ref": "#/$defs/NatsLimits"
+///    }
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+pub struct Limits {
+    ///Max data bytes (-1 for no limit).
+    #[serde(default = "defaults::default_i64::<i64, -1>")]
+    pub data: i64,
+    ///Max message payload size in bytes (-1 for no limit).
+    #[serde(default = "defaults::default_i64::<i64, -1>")]
+    pub payload: i64,
+    ///List of acceptable origin IPs for user.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub src: ::std::option::Option<CidrList>,
+    ///Max number of subscriptions (-1 for no limit).
+    #[serde(default = "defaults::default_i64::<i64, -1>")]
+    pub subs: i64,
+    ///Times when connection is allowed.
+    #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
+    pub times: ::std::vec::Vec<TimeRange>,
+    ///Timezone location for the times list.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub times_location: ::std::option::Option<::std::string::String>,
+}
+impl ::std::convert::From<&Limits> for Limits {
+    fn from(value: &Limits) -> Self {
+        value.clone()
+    }
+}
+impl ::std::default::Default for Limits {
+    fn default() -> Self {
+        Self {
+            data: defaults::default_i64::<i64, -1>(),
+            payload: defaults::default_i64::<i64, -1>(),
+            src: Default::default(),
+            subs: defaults::default_i64::<i64, -1>(),
+            times: Default::default(),
+            times_location: Default::default(),
+        }
+    }
+}
+impl Limits {
+    pub fn builder() -> builder::Limits {
         Default::default()
     }
 }
@@ -1780,13 +2146,11 @@ impl Permission {
 ///      "description": "Subscription permissions.",
 ///      "$ref": "#/$defs/Permission"
 ///    }
-///  },
-///  "additionalProperties": false
+///  }
 ///}
 /// ```
 /// </details>
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-#[serde(deny_unknown_fields)]
 pub struct Permissions {
     ///Publication permissions.
     #[serde(
@@ -2616,87 +2980,32 @@ impl TimeRange {
 /// ```json
 ///{
 ///  "description": "Represents user-specific configuration, including permissions, limits, issuer account, and optional bearer tokens.",
-///  "type": "object",
-///  "properties": {
-///    "allowed_connection_types": {
-///      "description": "The list of connection types allowed for this user.",
-///      "type": "array",
-///      "items": {
-///        "$ref": "#/$defs/ConnectionType"
+///  "allOf": [
+///    {
+///      "$ref": "#/$defs/GenericFields"
+///    },
+///    {
+///      "$ref": "#/$defs/UserPermissionLimits"
+///    },
+///    {
+///      "type": "object",
+///      "properties": {
+///        "issuer_account": {
+///          "description": "The account identity public key if JWT signed by a signing key.",
+///          "type": "string"
+///        },
+///        "type": {
+///          "default": "user",
+///          "const": "user",
+///          "$ref": "#/$defs/ClaimsType"
+///        }
 ///      }
-///    },
-///    "bearer_token": {
-///      "description": "If true, this user can be authenticated using a bearer token.",
-///      "default": true,
-///      "type": "boolean"
-///    },
-///    "data": {
-///      "description": "Max data size for the user (-1 for unlimited).",
-///      "default": -1,
-///      "type": "integer"
-///    },
-///    "issuer_account": {
-///      "description": "The account identity public key if JWT signed by a signing key.",
-///      "type": "string"
-///    },
-///    "payload": {
-///      "description": "Max number of payload size allowed (-1 for unlimited).",
-///      "default": -1,
-///      "type": "integer"
-///    },
-///    "pub": {
-///      "$ref": "#/$defs/Permission"
-///    },
-///    "resp": {
-///      "$ref": "#/$defs/ResponsePermission"
-///    },
-///    "src": {
-///      "description": "List of acceptable origin IPs for user.",
-///      "$ref": "#/$defs/CIDRList"
-///    },
-///    "sub": {
-///      "$ref": "#/$defs/Permission"
-///    },
-///    "subs": {
-///      "description": "Max number of subscriptions allowed (-1 for unlimited).",
-///      "default": -1,
-///      "type": "integer"
-///    },
-///    "tags": {
-///      "description": "Tags used to categorize or label this entity.",
-///      "$ref": "#/$defs/TagList",
-///      "$comment": "From GenericFields in the Go code."
-///    },
-///    "times": {
-///      "description": "Times when connection is allowed.",
-///      "type": "array",
-///      "items": {
-///        "$ref": "#/$defs/TimeRange"
-///      }
-///    },
-///    "times_location": {
-///      "description": "Timezone location for the times list.",
-///      "type": "string"
-///    },
-///    "type": {
-///      "description": "Indicates user claims.",
-///      "default": "user",
-///      "type": "string",
-///      "const": "user"
-///    },
-///    "version": {
-///      "description": "The version of the claim or issuing library.",
-///      "default": 2,
-///      "type": "integer",
-///      "$comment": "From GenericFields in the Go code."
 ///    }
-///  },
-///  "additionalProperties": false
+///  ]
 ///}
 /// ```
 /// </details>
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-#[serde(deny_unknown_fields)]
 pub struct User {
     ///The list of connection types allowed for this user.
     #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
@@ -2704,29 +3013,32 @@ pub struct User {
     ///If true, this user can be authenticated using a bearer token.
     #[serde(default = "defaults::default_bool::<true>")]
     pub bearer_token: bool,
-    ///Max data size for the user (-1 for unlimited).
+    ///Max data bytes (-1 for no limit).
     #[serde(default = "defaults::default_i64::<i64, -1>")]
     pub data: i64,
     ///The account identity public key if JWT signed by a signing key.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub issuer_account: ::std::option::Option<::std::string::String>,
-    ///Max number of payload size allowed (-1 for unlimited).
+    ///Max message payload size in bytes (-1 for no limit).
     #[serde(default = "defaults::default_i64::<i64, -1>")]
     pub payload: i64,
+    ///Publication permissions.
     #[serde(
         rename = "pub",
         default,
         skip_serializing_if = "::std::option::Option::is_none"
     )]
     pub pub_: ::std::option::Option<Permission>,
+    ///Response permissions for allowing temporary response subjects.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub resp: ::std::option::Option<ResponsePermission>,
     ///List of acceptable origin IPs for user.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub src: ::std::option::Option<CidrList>,
+    ///Subscription permissions.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub sub: ::std::option::Option<Permission>,
-    ///Max number of subscriptions allowed (-1 for unlimited).
+    ///Max number of subscriptions (-1 for no limit).
     #[serde(default = "defaults::default_i64::<i64, -1>")]
     pub subs: i64,
     ///Tags used to categorize or label this entity.
@@ -2738,10 +3050,9 @@ pub struct User {
     ///Timezone location for the times list.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub times_location: ::std::option::Option<::std::string::String>,
-    ///Indicates user claims.
     #[serde(rename = "type", default = "defaults::user_type")]
-    pub type_: ::std::string::String,
-    ///The version of the claim or issuing library.
+    pub type_: UserType,
+    ///The version of the claim.
     #[serde(default = "defaults::default_u64::<i64, 2>")]
     pub version: i64,
 }
@@ -2776,6 +3087,65 @@ impl User {
         Default::default()
     }
 }
+///UserLimits are the limits specific to Users.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "UserLimits are the limits specific to Users.",
+///  "type": "object",
+///  "properties": {
+///    "src": {
+///      "description": "List of acceptable origin IPs for user.",
+///      "$ref": "#/$defs/CIDRList"
+///    },
+///    "times": {
+///      "description": "Times when connection is allowed.",
+///      "type": "array",
+///      "items": {
+///        "$ref": "#/$defs/TimeRange"
+///      }
+///    },
+///    "times_location": {
+///      "description": "Timezone location for the times list.",
+///      "type": "string"
+///    }
+///  }
+///}
+/// ```
+/// </details>
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+pub struct UserLimits {
+    ///List of acceptable origin IPs for user.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub src: ::std::option::Option<CidrList>,
+    ///Times when connection is allowed.
+    #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
+    pub times: ::std::vec::Vec<TimeRange>,
+    ///Timezone location for the times list.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub times_location: ::std::option::Option<::std::string::String>,
+}
+impl ::std::convert::From<&UserLimits> for UserLimits {
+    fn from(value: &UserLimits) -> Self {
+        value.clone()
+    }
+}
+impl ::std::default::Default for UserLimits {
+    fn default() -> Self {
+        Self {
+            src: Default::default(),
+            times: Default::default(),
+            times_location: Default::default(),
+        }
+    }
+}
+impl UserLimits {
+    pub fn builder() -> builder::UserLimits {
+        Default::default()
+    }
+}
 ///Represents the combined permissions and limits assigned to a user, including bearer token and allowed connection types.
 ///
 /// <details><summary>JSON schema</summary>
@@ -2783,83 +3153,71 @@ impl User {
 /// ```json
 ///{
 ///  "description": "Represents the combined permissions and limits assigned to a user, including bearer token and allowed connection types.",
-///  "type": "object",
-///  "properties": {
-///    "allowed_connection_types": {
-///      "description": "A list of allowed connection types for this user.",
-///      "type": "array",
-///      "items": {
-///        "$ref": "#/$defs/ConnectionType"
+///  "allOf": [
+///    {
+///      "$ref": "#/$defs/Permissions"
+///    },
+///    {
+///      "$ref": "#/$defs/Limits"
+///    },
+///    {
+///      "type": "object",
+///      "properties": {
+///        "allowed_connection_types": {
+///          "description": "The list of connection types allowed for this user.",
+///          "type": "array",
+///          "items": {
+///            "$ref": "#/$defs/ConnectionType"
+///          }
+///        },
+///        "bearer_token": {
+///          "description": "If true, this user can be authenticated using a bearer token.",
+///          "default": true,
+///          "type": "boolean"
+///        }
 ///      }
-///    },
-///    "bearer_token": {
-///      "description": "Indicates if the user can use a bearer token instead of nonce-signed credentials.",
-///      "type": "boolean"
-///    },
-///    "data": {
-///      "type": "integer"
-///    },
-///    "payload": {
-///      "type": "integer"
-///    },
-///    "pub": {
-///      "$ref": "#/$defs/Permission"
-///    },
-///    "resp": {
-///      "$ref": "#/$defs/ResponsePermission"
-///    },
-///    "src": {
-///      "$ref": "#/$defs/CIDRList"
-///    },
-///    "sub": {
-///      "$ref": "#/$defs/Permission"
-///    },
-///    "subs": {
-///      "type": "integer"
-///    },
-///    "times": {
-///      "type": "array",
-///      "items": {
-///        "$ref": "#/$defs/TimeRange"
-///      }
-///    },
-///    "times_location": {
-///      "type": "string"
 ///    }
-///  },
-///  "additionalProperties": false
+///  ]
 ///}
 /// ```
 /// </details>
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-#[serde(deny_unknown_fields)]
 pub struct UserPermissionLimits {
-    ///A list of allowed connection types for this user.
+    ///The list of connection types allowed for this user.
     #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
     pub allowed_connection_types: ::std::vec::Vec<ConnectionType>,
-    ///Indicates if the user can use a bearer token instead of nonce-signed credentials.
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub bearer_token: ::std::option::Option<bool>,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub data: ::std::option::Option<i64>,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub payload: ::std::option::Option<i64>,
+    ///If true, this user can be authenticated using a bearer token.
+    #[serde(default = "defaults::default_bool::<true>")]
+    pub bearer_token: bool,
+    ///Max data bytes (-1 for no limit).
+    #[serde(default = "defaults::default_i64::<i64, -1>")]
+    pub data: i64,
+    ///Max message payload size in bytes (-1 for no limit).
+    #[serde(default = "defaults::default_i64::<i64, -1>")]
+    pub payload: i64,
+    ///Publication permissions.
     #[serde(
         rename = "pub",
         default,
         skip_serializing_if = "::std::option::Option::is_none"
     )]
     pub pub_: ::std::option::Option<Permission>,
+    ///Response permissions for allowing temporary response subjects.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub resp: ::std::option::Option<ResponsePermission>,
+    ///List of acceptable origin IPs for user.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub src: ::std::option::Option<CidrList>,
+    ///Subscription permissions.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub sub: ::std::option::Option<Permission>,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub subs: ::std::option::Option<i64>,
+    ///Max number of subscriptions (-1 for no limit).
+    #[serde(default = "defaults::default_i64::<i64, -1>")]
+    pub subs: i64,
+    ///Times when connection is allowed.
     #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
     pub times: ::std::vec::Vec<TimeRange>,
+    ///Timezone location for the times list.
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub times_location: ::std::option::Option<::std::string::String>,
 }
@@ -2872,14 +3230,14 @@ impl ::std::default::Default for UserPermissionLimits {
     fn default() -> Self {
         Self {
             allowed_connection_types: Default::default(),
-            bearer_token: Default::default(),
-            data: Default::default(),
-            payload: Default::default(),
+            bearer_token: defaults::default_bool::<true>(),
+            data: defaults::default_i64::<i64, -1>(),
+            payload: defaults::default_i64::<i64, -1>(),
             pub_: Default::default(),
             resp: Default::default(),
             src: Default::default(),
             sub: Default::default(),
-            subs: Default::default(),
+            subs: defaults::default_i64::<i64, -1>(),
             times: Default::default(),
             times_location: Default::default(),
         }
@@ -2963,6 +3321,82 @@ impl ::std::default::Default for UserScope {
 impl UserScope {
     pub fn builder() -> builder::UserScope {
         Default::default()
+    }
+}
+///UserType
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "enum": [
+///    "user"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum UserType {
+    #[serde(rename = "user")]
+    User,
+}
+impl ::std::convert::From<&Self> for UserType {
+    fn from(value: &UserType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for UserType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::User => write!(f, "user"),
+        }
+    }
+}
+impl ::std::str::FromStr for UserType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "user" => Ok(Self::User),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for UserType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for UserType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for UserType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::default::Default for UserType {
+    fn default() -> Self {
+        UserType::User
     }
 }
 ///Defines a single weighted mapping target with a subject, optional weight, and optional cluster.
@@ -3065,7 +3499,7 @@ pub mod builder {
             ::std::result::Result<::std::option::Option<super::SigningKeys>, ::std::string::String>,
         tags: ::std::result::Result<::std::option::Option<super::TagList>, ::std::string::String>,
         trace: ::std::result::Result<::std::option::Option<super::MsgTrace>, ::std::string::String>,
-        type_: ::std::result::Result<::std::string::String, ::std::string::String>,
+        type_: ::std::result::Result<super::AccountType, ::std::string::String>,
         version: ::std::result::Result<i64, ::std::string::String>,
     }
     impl ::std::default::Default for Account {
@@ -3225,7 +3659,7 @@ pub mod builder {
         }
         pub fn type_<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::string::String>,
+            T: ::std::convert::TryInto<super::AccountType>,
             T::Error: ::std::fmt::Display,
         {
             self.type_ = value
@@ -3408,10 +3842,7 @@ pub mod builder {
         subject:
             ::std::result::Result<::std::option::Option<super::Subject>, ::std::string::String>,
         tags: ::std::result::Result<::std::option::Option<super::TagList>, ::std::string::String>,
-        type_: ::std::result::Result<
-            ::std::option::Option<::std::string::String>,
-            ::std::string::String,
-        >,
+        type_: ::std::result::Result<super::ActivationType, ::std::string::String>,
         version: ::std::result::Result<i64, ::std::string::String>,
     }
     impl ::std::default::Default for Activation {
@@ -3421,7 +3852,7 @@ pub mod builder {
                 kind: Ok(Default::default()),
                 subject: Ok(Default::default()),
                 tags: Ok(Default::default()),
-                type_: Ok(Default::default()),
+                type_: Ok(super::defaults::activation_type()),
                 version: Ok(super::defaults::default_u64::<i64, 2>()),
             }
         }
@@ -3469,7 +3900,7 @@ pub mod builder {
         }
         pub fn type_<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T: ::std::convert::TryInto<super::ActivationType>,
             T::Error: ::std::fmt::Display,
         {
             self.type_ = value
@@ -3826,6 +4257,60 @@ pub mod builder {
         }
     }
     #[derive(Clone, Debug)]
+    pub struct GenericFields {
+        tags: ::std::result::Result<::std::option::Option<super::TagList>, ::std::string::String>,
+        version: ::std::result::Result<i64, ::std::string::String>,
+    }
+    impl ::std::default::Default for GenericFields {
+        fn default() -> Self {
+            Self {
+                tags: Ok(Default::default()),
+                version: Ok(super::defaults::default_u64::<i64, 2>()),
+            }
+        }
+    }
+    impl GenericFields {
+        pub fn tags<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::TagList>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.tags = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for tags: {}", e));
+            self
+        }
+        pub fn version<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<i64>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.version = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for version: {}", e));
+            self
+        }
+    }
+    impl ::std::convert::TryFrom<GenericFields> for super::GenericFields {
+        type Error = super::error::ConversionError;
+        fn try_from(
+            value: GenericFields,
+        ) -> ::std::result::Result<Self, super::error::ConversionError> {
+            Ok(Self {
+                tags: value.tags?,
+                version: value.version?,
+            })
+        }
+    }
+    impl ::std::convert::From<super::GenericFields> for GenericFields {
+        fn from(value: super::GenericFields) -> Self {
+            Self {
+                tags: Ok(value.tags),
+                version: Ok(value.version),
+            }
+        }
+    }
+    #[derive(Clone, Debug)]
     pub struct Import {
         account: ::std::result::Result<
             ::std::option::Option<::std::string::String>,
@@ -3986,6 +4471,64 @@ pub mod builder {
                 to: Ok(value.to),
                 token: Ok(value.token),
                 type_: Ok(value.type_),
+            }
+        }
+    }
+    #[derive(Clone, Debug)]
+    pub struct Info {
+        description: ::std::result::Result<
+            ::std::option::Option<::std::string::String>,
+            ::std::string::String,
+        >,
+        info_url: ::std::result::Result<
+            ::std::option::Option<::std::string::String>,
+            ::std::string::String,
+        >,
+    }
+    impl ::std::default::Default for Info {
+        fn default() -> Self {
+            Self {
+                description: Ok(Default::default()),
+                info_url: Ok(Default::default()),
+            }
+        }
+    }
+    impl Info {
+        pub fn description<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.description = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for description: {}", e));
+            self
+        }
+        pub fn info_url<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.info_url = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for info_url: {}", e));
+            self
+        }
+    }
+    impl ::std::convert::TryFrom<Info> for super::Info {
+        type Error = super::error::ConversionError;
+        fn try_from(value: Info) -> ::std::result::Result<Self, super::error::ConversionError> {
+            Ok(Self {
+                description: value.description?,
+                info_url: value.info_url?,
+            })
+        }
+    }
+    impl ::std::convert::From<super::Info> for Info {
+        fn from(value: super::Info) -> Self {
+            Self {
+                description: Ok(value.description),
+                info_url: Ok(value.info_url),
             }
         }
     }
@@ -4289,6 +4832,117 @@ pub mod builder {
                 nats: Ok(value.nats),
                 nbf: Ok(value.nbf),
                 sub: Ok(value.sub),
+            }
+        }
+    }
+    #[derive(Clone, Debug)]
+    pub struct Limits {
+        data: ::std::result::Result<i64, ::std::string::String>,
+        payload: ::std::result::Result<i64, ::std::string::String>,
+        src: ::std::result::Result<::std::option::Option<super::CidrList>, ::std::string::String>,
+        subs: ::std::result::Result<i64, ::std::string::String>,
+        times: ::std::result::Result<::std::vec::Vec<super::TimeRange>, ::std::string::String>,
+        times_location: ::std::result::Result<
+            ::std::option::Option<::std::string::String>,
+            ::std::string::String,
+        >,
+    }
+    impl ::std::default::Default for Limits {
+        fn default() -> Self {
+            Self {
+                data: Ok(super::defaults::default_i64::<i64, -1>()),
+                payload: Ok(super::defaults::default_i64::<i64, -1>()),
+                src: Ok(Default::default()),
+                subs: Ok(super::defaults::default_i64::<i64, -1>()),
+                times: Ok(Default::default()),
+                times_location: Ok(Default::default()),
+            }
+        }
+    }
+    impl Limits {
+        pub fn data<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<i64>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.data = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for data: {}", e));
+            self
+        }
+        pub fn payload<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<i64>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.payload = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for payload: {}", e));
+            self
+        }
+        pub fn src<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::CidrList>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.src = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for src: {}", e));
+            self
+        }
+        pub fn subs<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<i64>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.subs = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for subs: {}", e));
+            self
+        }
+        pub fn times<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::vec::Vec<super::TimeRange>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.times = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for times: {}", e));
+            self
+        }
+        pub fn times_location<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.times_location = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for times_location: {}", e));
+            self
+        }
+    }
+    impl ::std::convert::TryFrom<Limits> for super::Limits {
+        type Error = super::error::ConversionError;
+        fn try_from(value: Limits) -> ::std::result::Result<Self, super::error::ConversionError> {
+            Ok(Self {
+                data: value.data?,
+                payload: value.payload?,
+                src: value.src?,
+                subs: value.subs?,
+                times: value.times?,
+                times_location: value.times_location?,
+            })
+        }
+    }
+    impl ::std::convert::From<super::Limits> for Limits {
+        fn from(value: super::Limits) -> Self {
+            Self {
+                data: Ok(value.data),
+                payload: Ok(value.payload),
+                src: Ok(value.src),
+                subs: Ok(value.subs),
+                times: Ok(value.times),
+                times_location: Ok(value.times_location),
             }
         }
     }
@@ -5022,7 +5676,7 @@ pub mod builder {
             ::std::option::Option<::std::string::String>,
             ::std::string::String,
         >,
-        type_: ::std::result::Result<::std::string::String, ::std::string::String>,
+        type_: ::std::result::Result<super::UserType, ::std::string::String>,
         version: ::std::result::Result<i64, ::std::string::String>,
     }
     impl ::std::default::Default for User {
@@ -5182,7 +5836,7 @@ pub mod builder {
         }
         pub fn type_<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::string::String>,
+            T: ::std::convert::TryInto<super::UserType>,
             T::Error: ::std::fmt::Display,
         {
             self.type_ = value
@@ -5245,12 +5899,83 @@ pub mod builder {
         }
     }
     #[derive(Clone, Debug)]
+    pub struct UserLimits {
+        src: ::std::result::Result<::std::option::Option<super::CidrList>, ::std::string::String>,
+        times: ::std::result::Result<::std::vec::Vec<super::TimeRange>, ::std::string::String>,
+        times_location: ::std::result::Result<
+            ::std::option::Option<::std::string::String>,
+            ::std::string::String,
+        >,
+    }
+    impl ::std::default::Default for UserLimits {
+        fn default() -> Self {
+            Self {
+                src: Ok(Default::default()),
+                times: Ok(Default::default()),
+                times_location: Ok(Default::default()),
+            }
+        }
+    }
+    impl UserLimits {
+        pub fn src<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::CidrList>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.src = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for src: {}", e));
+            self
+        }
+        pub fn times<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::vec::Vec<super::TimeRange>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.times = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for times: {}", e));
+            self
+        }
+        pub fn times_location<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<::std::string::String>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.times_location = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for times_location: {}", e));
+            self
+        }
+    }
+    impl ::std::convert::TryFrom<UserLimits> for super::UserLimits {
+        type Error = super::error::ConversionError;
+        fn try_from(
+            value: UserLimits,
+        ) -> ::std::result::Result<Self, super::error::ConversionError> {
+            Ok(Self {
+                src: value.src?,
+                times: value.times?,
+                times_location: value.times_location?,
+            })
+        }
+    }
+    impl ::std::convert::From<super::UserLimits> for UserLimits {
+        fn from(value: super::UserLimits) -> Self {
+            Self {
+                src: Ok(value.src),
+                times: Ok(value.times),
+                times_location: Ok(value.times_location),
+            }
+        }
+    }
+    #[derive(Clone, Debug)]
     pub struct UserPermissionLimits {
         allowed_connection_types:
             ::std::result::Result<::std::vec::Vec<super::ConnectionType>, ::std::string::String>,
-        bearer_token: ::std::result::Result<::std::option::Option<bool>, ::std::string::String>,
-        data: ::std::result::Result<::std::option::Option<i64>, ::std::string::String>,
-        payload: ::std::result::Result<::std::option::Option<i64>, ::std::string::String>,
+        bearer_token: ::std::result::Result<bool, ::std::string::String>,
+        data: ::std::result::Result<i64, ::std::string::String>,
+        payload: ::std::result::Result<i64, ::std::string::String>,
         pub_:
             ::std::result::Result<::std::option::Option<super::Permission>, ::std::string::String>,
         resp: ::std::result::Result<
@@ -5259,7 +5984,7 @@ pub mod builder {
         >,
         src: ::std::result::Result<::std::option::Option<super::CidrList>, ::std::string::String>,
         sub: ::std::result::Result<::std::option::Option<super::Permission>, ::std::string::String>,
-        subs: ::std::result::Result<::std::option::Option<i64>, ::std::string::String>,
+        subs: ::std::result::Result<i64, ::std::string::String>,
         times: ::std::result::Result<::std::vec::Vec<super::TimeRange>, ::std::string::String>,
         times_location: ::std::result::Result<
             ::std::option::Option<::std::string::String>,
@@ -5270,14 +5995,14 @@ pub mod builder {
         fn default() -> Self {
             Self {
                 allowed_connection_types: Ok(Default::default()),
-                bearer_token: Ok(Default::default()),
-                data: Ok(Default::default()),
-                payload: Ok(Default::default()),
+                bearer_token: Ok(super::defaults::default_bool::<true>()),
+                data: Ok(super::defaults::default_i64::<i64, -1>()),
+                payload: Ok(super::defaults::default_i64::<i64, -1>()),
                 pub_: Ok(Default::default()),
                 resp: Ok(Default::default()),
                 src: Ok(Default::default()),
                 sub: Ok(Default::default()),
-                subs: Ok(Default::default()),
+                subs: Ok(super::defaults::default_i64::<i64, -1>()),
                 times: Ok(Default::default()),
                 times_location: Ok(Default::default()),
             }
@@ -5299,7 +6024,7 @@ pub mod builder {
         }
         pub fn bearer_token<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::option::Option<bool>>,
+            T: ::std::convert::TryInto<bool>,
             T::Error: ::std::fmt::Display,
         {
             self.bearer_token = value
@@ -5309,7 +6034,7 @@ pub mod builder {
         }
         pub fn data<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::option::Option<i64>>,
+            T: ::std::convert::TryInto<i64>,
             T::Error: ::std::fmt::Display,
         {
             self.data = value
@@ -5319,7 +6044,7 @@ pub mod builder {
         }
         pub fn payload<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::option::Option<i64>>,
+            T: ::std::convert::TryInto<i64>,
             T::Error: ::std::fmt::Display,
         {
             self.payload = value
@@ -5369,7 +6094,7 @@ pub mod builder {
         }
         pub fn subs<T>(mut self, value: T) -> Self
         where
-            T: ::std::convert::TryInto<::std::option::Option<i64>>,
+            T: ::std::convert::TryInto<i64>,
             T::Error: ::std::fmt::Display,
         {
             self.subs = value
@@ -5635,11 +6360,14 @@ pub mod defaults {
     {
         T::try_from(V).unwrap()
     }
-    pub(super) fn account_type() -> ::std::string::String {
-        "account".to_string()
+    pub(super) fn account_type() -> super::AccountType {
+        super::AccountType::Account
     }
-    pub(super) fn user_type() -> ::std::string::String {
-        "user".to_string()
+    pub(super) fn activation_type() -> super::ActivationType {
+        super::ActivationType::Activation
+    }
+    pub(super) fn user_type() -> super::UserType {
+        super::UserType::User
     }
     pub(super) fn user_scope_kind() -> super::ScopeType {
         super::ScopeType::UserScope

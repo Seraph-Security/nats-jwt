@@ -246,7 +246,8 @@ mod tests {
                     panic!("Expected Default Limits");
                 };
             }
-            _ => panic!("Expected Account"),
+            Claims::User(_) => panic!("Expected Account, was User"),
+            Claims::Activation(_) => panic!("Expected Account, was Activation"),
         }
 
         let operator_signing_key = KeyPair::new_operator();

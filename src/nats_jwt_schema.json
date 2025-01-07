@@ -1,113 +1,97 @@
 {
-    "$id": "https://seraphsec.org/nats_jwt_schema.json",
+    "$id": "https://github.com/Seraph-Security/nats-jwt/blob/main/src/nats_jwt_schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$defs": {
         "Account": {
-            "type": "object",
             "description": "Represents the core configuration of an account, including imports, exports, limits, signing keys, default permissions, mappings, external auth, and more.",
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "description": "Indicates account claims.",
-                    "const": "account",
-                    "default": "account"
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Info"
                 },
-                "description": {
-                    "type": "string",
-                    "description": "A description providing more detail about this account."
+                {
+                    "$ref": "#/$defs/GenericFields"
                 },
-                "authorization": {
-                    "$ref": "#/$defs/ExternalAuthorization",
-                    "description": "Configuration for external authorization callouts."
-                },
-                "cluster_traffic": {
-                    "$ref": "#/$defs/ClusterTraffic",
-                    "description": "Indicates how cluster traffic is handled by this account. Can be 'system' or 'owner'."
-                },
-                "default_permissions": {
-                    "$ref": "#/$defs/Permissions",
-                    "description": "Default permissions applied to users of this account if no user-specific permissions are provided."
-                },
-                "exports": {
-                    "$ref": "#/$defs/Exports",
-                    "description": "Subjects exported from this account."
-                },
-                "imports": {
-                    "$ref": "#/$defs/Imports",
-                    "description": "Subjects imported from other accounts."
-                },
-                "info_url": {
-                    "type": "string",
-                    "description": "A URL with more information about this account."
-                },
-                "limits": {
-                    "$ref": "#/$defs/OperatorLimits",
-                    "description": "Limits that apply to this account, including operator-level, NATS, and JetStream constraints."
-                },
-                "mappings": {
-                    "$ref": "#/$defs/Mapping",
-                    "description": "Subject mappings that redirect or distribute messages from one subject to others."
-                },
-                "revocations": {
-                    "$ref": "#/$defs/RevocationList",
-                    "description": "A list of revoked user or account keys associated with this account."
-                },
-                "signing_keys": {
-                    "$ref": "#/$defs/SigningKeys",
-                    "description": "Keys authorized to sign user JWTs on behalf of this account, along with their scopes."
-                },
-                "tags": {
-                    "$ref": "#/$defs/TagList",
-                    "description": "Tags used to categorize or label this entity.",
-                    "$comment": "From GenericFields in the Go code."
-                },
-                "trace": {
-                    "$ref": "#/$defs/MsgTrace",
-                    "description": "Distributed message tracing configuration for this account."
-                },
-                "version": {
-                    "type": "integer",
-                    "description": "The version of the claim or issuing library.",
-                    "$comment": "From GenericFields in the Go code.",
-                    "default": 2
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "$ref": "#/$defs/ClaimsType",
+                            "const": "account",
+                            "default": "account"
+                        },
+                        "authorization": {
+                            "$ref": "#/$defs/ExternalAuthorization",
+                            "description": "Configuration for external authorization callouts."
+                        },
+                        "cluster_traffic": {
+                            "$ref": "#/$defs/ClusterTraffic",
+                            "description": "Indicates how cluster traffic is handled by this account. Can be 'system' or 'owner'."
+                        },
+                        "default_permissions": {
+                            "$ref": "#/$defs/Permissions",
+                            "description": "Default permissions applied to users of this account if no user-specific permissions are provided."
+                        },
+                        "exports": {
+                            "$ref": "#/$defs/Exports",
+                            "description": "Subjects exported from this account."
+                        },
+                        "imports": {
+                            "$ref": "#/$defs/Imports",
+                            "description": "Subjects imported from other accounts."
+                        },
+                        "limits": {
+                            "$ref": "#/$defs/OperatorLimits",
+                            "description": "Limits that apply to this account, including operator-level, NATS, and JetStream constraints."
+                        },
+                        "mappings": {
+                            "$ref": "#/$defs/Mapping",
+                            "description": "Subject mappings that redirect or distribute messages from one subject to others."
+                        },
+                        "revocations": {
+                            "$ref": "#/$defs/RevocationList",
+                            "description": "A list of revoked user or account keys associated with this account."
+                        },
+                        "signing_keys": {
+                            "$ref": "#/$defs/SigningKeys",
+                            "description": "Keys authorized to sign user JWTs on behalf of this account, along with their scopes."
+                        },
+                        "trace": {
+                            "$ref": "#/$defs/MsgTrace",
+                            "description": "Distributed message tracing configuration for this account."
+                        }
+                    }
                 }
-            }
+            ]
         },
         "Activation": {
-            "type": "object",
             "description": "Defines the custom parts of an activation claim, including the imported subject and its type (stream/service).",
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "description": "Indicates activation claims.",
-                    "const": "activation"
+            "allOf": [
+                {
+                    "$ref": "#/$defs/GenericFields"
                 },
-                "issuer_account": {
-                    "type": "string",
-                    "description": "The account public key that issued this activation (if signing key used)."
-                },
-                "kind": {
-                    "$ref": "#/$defs/ExportType",
-                    "description": "The type of import the activation is for, either 'stream' or 'service'."
-                },
-                "subject": {
-                    "$ref": "#/$defs/Subject",
-                    "description": "The subject to which the activation applies."
-                },
-                "tags": {
-                    "$ref": "#/$defs/TagList",
-                    "description": "Tags used to categorize or label this entity.",
-                    "$comment": "From GenericFields in the Go code."
-                },
-                "version": {
-                    "type": "integer",
-                    "description": "The version of the claim or issuing library.",
-                    "$comment": "From GenericFields in the Go code.",
-                    "default": 2
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "$ref": "#/$defs/ClaimsType",
+                            "const": "activation",
+                            "default": "activation"
+                        },
+                        "issuer_account": {
+                            "type": "string",
+                            "description": "The account public key that issued this activation (if signing key used)."
+                        },
+                        "kind": {
+                            "$ref": "#/$defs/ExportType",
+                            "description": "The type of import the activation is for, either 'stream' or 'service'."
+                        },
+                        "subject": {
+                            "$ref": "#/$defs/Subject",
+                            "description": "The subject to which the activation applies."
+                        }
+                    }
                 }
-            }
+            ]
         },
         "CIDRList": {
             "type": "array",
@@ -136,6 +120,14 @@
                 }
             ]
         },
+        "ClaimsType": {
+            "description": "The type of the claims.",
+            "enum": [
+                "account",
+                "activation",
+                "user"
+            ]
+        },
         "ClusterTraffic": {
             "type": "string",
             "description": "Represents how cluster traffic should be handled. Allowed values are empty (no special handling), 'system' (use system accounts), or 'owner' (use owner accounts).",
@@ -159,64 +151,62 @@
             ]
         },
         "Export": {
-            "type": "object",
             "description": "Represents an export that allows other accounts to import subjects from this account, possibly requiring tokens.",
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "$ref": "#/$defs/ExportType",
-                    "description": "The type of export, either 'stream' or 'service'."
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Info"
                 },
-                "description": {
-                    "type": "string",
-                    "description": "A textual description providing more details about this export."
-                },
-                "account_token_position": {
-                    "type": "integer",
-                    "description": "If set, references the position of an account token in a wildcard subject (public exports only)."
-                },
-                "advertise": {
-                    "type": "boolean",
-                    "description": "Indicates if this export should be advertised to other accounts."
-                },
-                "allow_trace": {
-                    "type": "boolean",
-                    "description": "Allows message tracing if this is a service export."
-                },
-                "info_url": {
-                    "type": "string",
-                    "description": "A URL with additional information about this export."
-                },
-                "name": {
-                    "type": "string",
-                    "description": "A human-readable name for this export."
-                },
-                "response_threshold": {
-                    "type": "integer",
-                    "description": "The response threshold in nanoseconds, valid only for services."
-                },
-                "response_type": {
-                    "$ref": "#/$defs/ResponseType",
-                    "description": "The type of response pattern for a service export."
-                },
-                "revocations": {
-                    "$ref": "#/$defs/RevocationList",
-                    "description": "A list of revocations for previously issued activations."
-                },
-                "service_latency": {
-                    "$ref": "#/$defs/ServiceLatency",
-                    "description": "Configures latency tracking for services."
-                },
-                "subject": {
-                    "$ref": "#/$defs/Subject",
-                    "description": "The subject being exported."
-                },
-                "token_req": {
-                    "type": "boolean",
-                    "description": "Indicates if an activation token is required for imports.",
-                    "default": false
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "$ref": "#/$defs/ExportType",
+                            "description": "The type of export, either 'stream' or 'service'."
+                        },
+                        "account_token_position": {
+                            "type": "integer",
+                            "description": "If set, references the position of an account token in a wildcard subject (public exports only)."
+                        },
+                        "advertise": {
+                            "type": "boolean",
+                            "description": "Indicates if this export should be advertised to other accounts."
+                        },
+                        "allow_trace": {
+                            "type": "boolean",
+                            "description": "Allows message tracing if this is a service export."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "A human-readable name for this export."
+                        },
+                        "response_threshold": {
+                            "type": "integer",
+                            "description": "The response threshold in nanoseconds, valid only for services."
+                        },
+                        "response_type": {
+                            "$ref": "#/$defs/ResponseType",
+                            "description": "The type of response pattern for a service export."
+                        },
+                        "revocations": {
+                            "$ref": "#/$defs/RevocationList",
+                            "description": "A list of revocations for previously issued activations."
+                        },
+                        "service_latency": {
+                            "$ref": "#/$defs/ServiceLatency",
+                            "description": "Configures latency tracking for services."
+                        },
+                        "subject": {
+                            "$ref": "#/$defs/Subject",
+                            "description": "The subject being exported."
+                        },
+                        "token_req": {
+                            "type": "boolean",
+                            "description": "Indicates if an activation token is required for imports.",
+                            "default": false
+                        }
+                    }
                 }
-            }
+            ]
         },
         "ExportType": {
             "type": "string",
@@ -250,6 +240,22 @@
                 "xkey": {
                     "type": "string",
                     "description": "An optional public x25519 key for encrypting authorization requests."
+                }
+            }
+        },
+        "GenericFields": {
+            "type": "object",
+            "description": "Generic fields shared by multiple kinds of claims.",
+            "$comment": "NOTE: type field omitted as it's const depending on the implementing entity.",
+            "properties": {
+                "tags": {
+                    "$ref": "#/$defs/TagList",
+                    "description": "Tags used to categorize or label this entity."
+                },
+                "version": {
+                    "type": "integer",
+                    "description": "The version of the claim.",
+                    "default": 2
                 }
             }
         },
@@ -301,6 +307,20 @@
             "description": "A list of imports, each defining an external subject mapped into this account.",
             "items": {
                 "$ref": "#/$defs/Import"
+            }
+        },
+        "Info": {
+            "type": "object",
+            "description": "Generic extra Info.",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "description": "A more detailed description."
+                },
+                "info_url": {
+                    "type": "string",
+                    "description": "URL to find extra info."
+                }
             }
         },
         "JetStreamLimits": {
@@ -355,6 +375,17 @@
             "additionalProperties": {
                 "$ref": "#/$defs/JetStreamLimits"
             }
+        },
+        "Limits": {
+            "description": "The limits for Users including generic NatsLimits and User specific UserLimits",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/UserLimits"
+                },
+                {
+                    "$ref": "#/$defs/NatsLimits"
+                }
+            ]
         },
         "Mapping": {
             "type": "object",
@@ -485,7 +516,6 @@
         "Permissions": {
             "type": "object",
             "description": "Represents a set of permissions controlling what subjects can be published or subscribed to, and optional response permissions.",
-            "additionalProperties": false,
             "properties": {
                 "pub": {
                     "$ref": "#/$defs/Permission",
@@ -636,64 +666,37 @@
             }
         },
         "User": {
-            "type": "object",
             "description": "Represents user-specific configuration, including permissions, limits, issuer account, and optional bearer tokens.",
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "description": "Indicates user claims.",
-                    "const": "user",
-                    "default": "user"
+            "allOf": [
+                {
+                    "$ref": "#/$defs/GenericFields"
                 },
-                "allowed_connection_types": {
-                    "type": "array",
-                    "description": "The list of connection types allowed for this user.",
-                    "items": {
-                        "$ref": "#/$defs/ConnectionType"
+                {
+                    "$ref": "#/$defs/UserPermissionLimits"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "$ref": "#/$defs/ClaimsType",
+                            "const": "user",
+                            "default": "user"
+                        },
+                        "issuer_account": {
+                            "type": "string",
+                            "description": "The account identity public key if JWT signed by a signing key."
+                        }
                     }
-                },
-                "bearer_token": {
-                    "type": "boolean",
-                    "description": "If true, this user can be authenticated using a bearer token.",
-                    "default": true
-                },
-                "data": {
-                    "type": "integer",
-                    "description": "Max data size for the user (-1 for unlimited).",
-                    "default": -1
-                },
-                "issuer_account": {
-                    "type": "string",
-                    "description": "The account identity public key if JWT signed by a signing key."
-                },
-                "payload": {
-                    "type": "integer",
-                    "description": "Max number of payload size allowed (-1 for unlimited).",
-                    "default": -1
-                },
-                "pub": {
-                    "$ref": "#/$defs/Permission"
-                },
-                "resp": {
-                    "$ref": "#/$defs/ResponsePermission"
-                },
+                }
+            ]
+        },
+        "UserLimits": {
+            "type": "object",
+            "description": "UserLimits are the limits specific to Users.",
+            "properties": {
                 "src": {
                     "$ref": "#/$defs/CIDRList",
                     "description": "List of acceptable origin IPs for user."
-                },
-                "sub": {
-                    "$ref": "#/$defs/Permission"
-                },
-                "subs": {
-                    "type": "integer",
-                    "description": "Max number of subscriptions allowed (-1 for unlimited).",
-                    "default": -1
-                },
-                "tags": {
-                    "$ref": "#/$defs/TagList",
-                    "description": "Tags used to categorize or label this entity.",
-                    "$comment": "From GenericFields in the Go code."
                 },
                 "times": {
                     "type": "array",
@@ -705,62 +708,36 @@
                 "times_location": {
                     "type": "string",
                     "description": "Timezone location for the times list."
-                },
-                "version": {
-                    "type": "integer",
-                    "description": "The version of the claim or issuing library.",
-                    "$comment": "From GenericFields in the Go code.",
-                    "default": 2
                 }
             }
         },
         "UserPermissionLimits": {
-            "type": "object",
             "description": "Represents the combined permissions and limits assigned to a user, including bearer token and allowed connection types.",
-            "additionalProperties": false,
-            "properties": {
-                "allowed_connection_types": {
-                    "type": "array",
-                    "description": "A list of allowed connection types for this user.",
-                    "items": {
-                        "$ref": "#/$defs/ConnectionType"
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Permissions"
+                },
+                {
+                    "$ref": "#/$defs/Limits"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "allowed_connection_types": {
+                            "type": "array",
+                            "description": "The list of connection types allowed for this user.",
+                            "items": {
+                                "$ref": "#/$defs/ConnectionType"
+                            }
+                        },
+                        "bearer_token": {
+                            "type": "boolean",
+                            "description": "If true, this user can be authenticated using a bearer token.",
+                            "default": true
+                        }
                     }
-                },
-                "bearer_token": {
-                    "type": "boolean",
-                    "description": "Indicates if the user can use a bearer token instead of nonce-signed credentials."
-                },
-                "data": {
-                    "type": "integer"
-                },
-                "payload": {
-                    "type": "integer"
-                },
-                "pub": {
-                    "$ref": "#/$defs/Permission"
-                },
-                "resp": {
-                    "$ref": "#/$defs/ResponsePermission"
-                },
-                "src": {
-                    "$ref": "#/$defs/CIDRList"
-                },
-                "sub": {
-                    "$ref": "#/$defs/Permission"
-                },
-                "subs": {
-                    "type": "integer"
-                },
-                "times": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/$defs/TimeRange"
-                    }
-                },
-                "times_location": {
-                    "type": "string"
                 }
-            }
+            ]
         },
         "UserScope": {
             "type": "object",
