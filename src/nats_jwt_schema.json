@@ -63,6 +63,10 @@
                 }
             ]
         },
+        "AccountServerURL": {
+            "type": "string",
+            "description": "AccountServerURL is a partial URL like 'https://host.domain.org:<port>/jwt/v1' tools will use the prefix and build queries by appending /accounts/<account_id> or /operator to the path provided. Note this assumes that the account server can handle requests in a nats-account-server compatible way. See https://github.com/nats-io/nats-account-server."
+        },
         "Activation": {
             "description": "Defines the custom parts of an activation claim, including the imported subject and its type (stream/service).",
             "allOf": [
@@ -93,6 +97,10 @@
                 }
             ]
         },
+        "AssertServerVersion": {
+            "type": "string",
+            "description": "Min Server version."
+        },
         "CIDRList": {
             "type": "array",
             "description": "A list of CIDR-notation addresses for restricting access based on IP ranges.",
@@ -106,6 +114,10 @@
             "type": "object",
             "description": "Configuration and permission Claims.",
             "oneOf": [
+                {
+                    "$ref": "#/$defs/Operator",
+                    "description": "Operator-specific configuration and permissions."
+                },
                 {
                     "$ref": "#/$defs/User",
                     "description": "User-specific configuration and permissions."
@@ -123,6 +135,7 @@
         "ClaimsType": {
             "description": "The type of the claims.",
             "enum": [
+                "operator",
                 "account",
                 "activation",
                 "user"
@@ -475,6 +488,52 @@
                 }
             }
         },
+        "Operator": {
+            "description": "Represents operator-specific configuration, including permissions, limits, and optional bearer tokens.",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/GenericFields"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "$ref": "#/$defs/ClaimsType",
+                            "const": "operator",
+                            "default": "operator"
+                        },
+                        "signing_keys": {
+                            "$ref": "#/$defs/SigningKeys",
+                            "description": "Keys authorized to sign user JWTs on behalf of this account, along with their scopes."
+                        },
+                        "account_server_url": {
+                            "$ref": "#/$defs/AccountServerURL"
+                        },
+                        "operator_service_urls": {
+                            "$ref": "#/$defs/OperatorServiceURLs"
+                        },
+                        "system_account": {
+                            "$ref": "#/$defs/SystemAccount"
+                        },
+                        "assert_server_version": {
+                            "$ref": "#/$defs/AssertServerVersion"
+                        },
+                        "strict_signing_key_usage": {
+                            "$ref": "#/$defs/StrictSigningKeyUsage"
+                        }
+                    }
+                }
+            ]
+        },
+        "OperatorServiceURLs": {
+            "type": "array",
+            "description": "A list of NATS urls (tls://host:port) where tools can connect to the server using proper credentials.",
+            "items": {
+                "type": "string",
+                "description": "A NATS url."
+            },
+            "uniqueItems": true
+        },
         "OperatorLimits": {
             "description": "Represents all operator-imposed limits on an account, including NATS limits, account limits, and JetStream limits.",
             "allOf": [
@@ -626,6 +685,11 @@
                 ]
             }
         },
+        "StrictSigningKeyUsage": {
+            "type": "boolean",
+            "description": "Signing of subordinate objects will require signing keys.",
+            "default": false
+        },
         "StringList": {
             "type": "array",
             "description": "A list of arbitrary strings.",
@@ -637,6 +701,10 @@
         "Subject": {
             "type": "string",
             "description": "Represents a NATS subject, a hierarchical string separated by dots, with optional wildcards ('*' or '>')."
+        },
+        "SystemAccount": {
+            "type": "string",
+            "description": "Identity of the system account."
         },
         "TagList": {
             "type": "array",

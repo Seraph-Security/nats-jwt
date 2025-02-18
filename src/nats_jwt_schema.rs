@@ -259,6 +259,54 @@ impl AccountLimits {
         Default::default()
     }
 }
+///AccountServerURL is a partial URL like 'https://host.domain.org:<port>/jwt/v1' tools will use the prefix and build queries by appending /accounts/<account_id> or /operator to the path provided. Note this assumes that the account server can handle requests in a nats-account-server compatible way. See https://github.com/nats-io/nats-account-server.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "AccountServerURL is a partial URL like 'https://host.domain.org:<port>/jwt/v1' tools will use the prefix and build queries by appending /accounts/<account_id> or /operator to the path provided. Note this assumes that the account server can handle requests in a nats-account-server compatible way. See https://github.com/nats-io/nats-account-server.",
+///  "type": "string"
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize, ::serde::Serialize, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd,
+)]
+#[serde(transparent)]
+pub struct AccountServerUrl(pub ::std::string::String);
+impl ::std::ops::Deref for AccountServerUrl {
+    type Target = ::std::string::String;
+    fn deref(&self) -> &::std::string::String {
+        &self.0
+    }
+}
+impl ::std::convert::From<AccountServerUrl> for ::std::string::String {
+    fn from(value: AccountServerUrl) -> Self {
+        value.0
+    }
+}
+impl ::std::convert::From<&AccountServerUrl> for AccountServerUrl {
+    fn from(value: &AccountServerUrl) -> Self {
+        value.clone()
+    }
+}
+impl ::std::convert::From<::std::string::String> for AccountServerUrl {
+    fn from(value: ::std::string::String) -> Self {
+        Self(value)
+    }
+}
+impl ::std::str::FromStr for AccountServerUrl {
+    type Err = ::std::convert::Infallible;
+    fn from_str(value: &str) -> ::std::result::Result<Self, Self::Err> {
+        Ok(Self(value.to_string()))
+    }
+}
+impl ::std::fmt::Display for AccountServerUrl {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 ///AccountType
 ///
 /// <details><summary>JSON schema</summary>
@@ -490,6 +538,54 @@ impl ::std::default::Default for ActivationType {
         ActivationType::Activation
     }
 }
+///Min Server version.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "Min Server version.",
+///  "type": "string"
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize, ::serde::Serialize, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd,
+)]
+#[serde(transparent)]
+pub struct AssertServerVersion(pub ::std::string::String);
+impl ::std::ops::Deref for AssertServerVersion {
+    type Target = ::std::string::String;
+    fn deref(&self) -> &::std::string::String {
+        &self.0
+    }
+}
+impl ::std::convert::From<AssertServerVersion> for ::std::string::String {
+    fn from(value: AssertServerVersion) -> Self {
+        value.0
+    }
+}
+impl ::std::convert::From<&AssertServerVersion> for AssertServerVersion {
+    fn from(value: &AssertServerVersion) -> Self {
+        value.clone()
+    }
+}
+impl ::std::convert::From<::std::string::String> for AssertServerVersion {
+    fn from(value: ::std::string::String) -> Self {
+        Self(value)
+    }
+}
+impl ::std::str::FromStr for AssertServerVersion {
+    type Err = ::std::convert::Infallible;
+    fn from_str(value: &str) -> ::std::result::Result<Self, Self::Err> {
+        Ok(Self(value.to_string()))
+    }
+}
+impl ::std::fmt::Display for AssertServerVersion {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 ///A list of CIDR-notation addresses for restricting access based on IP ranges.
 ///
 /// <details><summary>JSON schema</summary>
@@ -540,6 +636,10 @@ impl ::std::convert::From<Vec<::std::string::String>> for CidrList {
 ///  "type": "object",
 ///  "oneOf": [
 ///    {
+///      "description": "Operator-specific configuration and permissions.",
+///      "$ref": "#/$defs/Operator"
+///    },
+///    {
 ///      "description": "User-specific configuration and permissions.",
 ///      "$ref": "#/$defs/User"
 ///    },
@@ -558,6 +658,7 @@ impl ::std::convert::From<Vec<::std::string::String>> for CidrList {
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
 #[serde(untagged)]
 pub enum Claims {
+    Operator(Operator),
     User(User),
     Account(Account),
     Activation(Activation),
@@ -565,6 +666,11 @@ pub enum Claims {
 impl ::std::convert::From<&Self> for Claims {
     fn from(value: &Claims) -> Self {
         value.clone()
+    }
+}
+impl ::std::convert::From<Operator> for Claims {
+    fn from(value: Operator) -> Self {
+        Self::Operator(value)
     }
 }
 impl ::std::convert::From<User> for Claims {
@@ -590,6 +696,7 @@ impl ::std::convert::From<Activation> for Claims {
 ///{
 ///  "description": "The type of the claims.",
 ///  "enum": [
+///    "operator",
 ///    "account",
 ///    "activation",
 ///    "user"
@@ -610,6 +717,8 @@ impl ::std::convert::From<Activation> for Claims {
     PartialOrd,
 )]
 pub enum ClaimsType {
+    #[serde(rename = "operator")]
+    Operator,
     #[serde(rename = "account")]
     Account,
     #[serde(rename = "activation")]
@@ -625,6 +734,7 @@ impl ::std::convert::From<&Self> for ClaimsType {
 impl ::std::fmt::Display for ClaimsType {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match *self {
+            Self::Operator => write!(f, "operator"),
             Self::Account => write!(f, "account"),
             Self::Activation => write!(f, "activation"),
             Self::User => write!(f, "user"),
@@ -635,6 +745,7 @@ impl ::std::str::FromStr for ClaimsType {
     type Err = self::error::ConversionError;
     fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
         match value {
+            "operator" => Ok(Self::Operator),
             "account" => Ok(Self::Account),
             "activation" => Ok(Self::Activation),
             "user" => Ok(Self::User),
@@ -1954,6 +2065,99 @@ impl NatsLimits {
         Default::default()
     }
 }
+///Represents operator-specific configuration, including permissions, limits, and optional bearer tokens.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "Represents operator-specific configuration, including permissions, limits, and optional bearer tokens.",
+///  "allOf": [
+///    {
+///      "$ref": "#/$defs/GenericFields"
+///    },
+///    {
+///      "type": "object",
+///      "properties": {
+///        "account_server_url": {
+///          "$ref": "#/$defs/AccountServerURL"
+///        },
+///        "assert_server_version": {
+///          "$ref": "#/$defs/AssertServerVersion"
+///        },
+///        "operator_service_urls": {
+///          "$ref": "#/$defs/OperatorServiceURLs"
+///        },
+///        "signing_keys": {
+///          "description": "Keys authorized to sign user JWTs on behalf of this account, along with their scopes.",
+///          "$ref": "#/$defs/SigningKeys"
+///        },
+///        "strict_signing_key_usage": {
+///          "$ref": "#/$defs/StrictSigningKeyUsage"
+///        },
+///        "system_account": {
+///          "$ref": "#/$defs/SystemAccount"
+///        },
+///        "type": {
+///          "default": "operator",
+///          "const": "operator",
+///          "$ref": "#/$defs/ClaimsType"
+///        }
+///      }
+///    }
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+pub struct Operator {
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub account_server_url: ::std::option::Option<AccountServerUrl>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub assert_server_version: ::std::option::Option<AssertServerVersion>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub operator_service_urls: ::std::option::Option<OperatorServiceUrLs>,
+    ///Keys authorized to sign user JWTs on behalf of this account, along with their scopes.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub signing_keys: ::std::option::Option<SigningKeys>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub strict_signing_key_usage: ::std::option::Option<StrictSigningKeyUsage>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub system_account: ::std::option::Option<SystemAccount>,
+    ///Tags used to categorize or label this entity.
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub tags: ::std::option::Option<TagList>,
+    #[serde(rename = "type", default = "defaults::operator_type")]
+    pub type_: OperatorType,
+    ///The version of the claim.
+    #[serde(default = "defaults::default_u64::<i64, 2>")]
+    pub version: i64,
+}
+impl ::std::convert::From<&Operator> for Operator {
+    fn from(value: &Operator) -> Self {
+        value.clone()
+    }
+}
+impl ::std::default::Default for Operator {
+    fn default() -> Self {
+        Self {
+            account_server_url: Default::default(),
+            assert_server_version: Default::default(),
+            operator_service_urls: Default::default(),
+            signing_keys: Default::default(),
+            strict_signing_key_usage: Default::default(),
+            system_account: Default::default(),
+            tags: Default::default(),
+            type_: defaults::operator_type(),
+            version: defaults::default_u64::<i64, 2>(),
+        }
+    }
+}
+impl Operator {
+    pub fn builder() -> builder::Operator {
+        Default::default()
+    }
+}
 ///Represents all operator-imposed limits on an account, including NATS limits, account limits, and JetStream limits.
 ///
 /// <details><summary>JSON schema</summary>
@@ -2073,6 +2277,122 @@ impl ::std::default::Default for OperatorLimits {
 impl OperatorLimits {
     pub fn builder() -> builder::OperatorLimits {
         Default::default()
+    }
+}
+///A list of NATS urls (tls://host:port) where tools can connect to the server using proper credentials.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "A list of NATS urls (tls://host:port) where tools can connect to the server using proper credentials.",
+///  "type": "array",
+///  "items": {
+///    "description": "A NATS url.",
+///    "type": "string"
+///  },
+///  "uniqueItems": true
+///}
+/// ```
+/// </details>
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+#[serde(transparent)]
+pub struct OperatorServiceUrLs(pub Vec<::std::string::String>);
+impl ::std::ops::Deref for OperatorServiceUrLs {
+    type Target = Vec<::std::string::String>;
+    fn deref(&self) -> &Vec<::std::string::String> {
+        &self.0
+    }
+}
+impl ::std::convert::From<OperatorServiceUrLs> for Vec<::std::string::String> {
+    fn from(value: OperatorServiceUrLs) -> Self {
+        value.0
+    }
+}
+impl ::std::convert::From<&OperatorServiceUrLs> for OperatorServiceUrLs {
+    fn from(value: &OperatorServiceUrLs) -> Self {
+        value.clone()
+    }
+}
+impl ::std::convert::From<Vec<::std::string::String>> for OperatorServiceUrLs {
+    fn from(value: Vec<::std::string::String>) -> Self {
+        Self(value)
+    }
+}
+///OperatorType
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "enum": [
+///    "operator"
+///  ]
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize,
+    ::serde::Serialize,
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+)]
+pub enum OperatorType {
+    #[serde(rename = "operator")]
+    Operator,
+}
+impl ::std::convert::From<&Self> for OperatorType {
+    fn from(value: &OperatorType) -> Self {
+        value.clone()
+    }
+}
+impl ::std::fmt::Display for OperatorType {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match *self {
+            Self::Operator => write!(f, "operator"),
+        }
+    }
+}
+impl ::std::str::FromStr for OperatorType {
+    type Err = self::error::ConversionError;
+    fn from_str(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        match value {
+            "operator" => Ok(Self::Operator),
+            _ => Err("invalid value".into()),
+        }
+    }
+}
+impl ::std::convert::TryFrom<&str> for OperatorType {
+    type Error = self::error::ConversionError;
+    fn try_from(value: &str) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&::std::string::String> for OperatorType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: &::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<::std::string::String> for OperatorType {
+    type Error = self::error::ConversionError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::std::result::Result<Self, self::error::ConversionError> {
+        value.parse()
+    }
+}
+impl ::std::default::Default for OperatorType {
+    fn default() -> Self {
+        OperatorType::Operator
     }
 }
 ///Defines per-subject publish or subscribe permissions with allow and deny lists.
@@ -2803,6 +3123,71 @@ impl ::std::convert::From<UserScope> for SigningKeysItem {
         Self::UserScope(value)
     }
 }
+///Signing of subordinate objects will require signing keys.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "Signing of subordinate objects will require signing keys.",
+///  "default": false,
+///  "type": "boolean"
+///}
+/// ```
+/// </details>
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+#[serde(transparent)]
+pub struct StrictSigningKeyUsage(pub bool);
+impl ::std::ops::Deref for StrictSigningKeyUsage {
+    type Target = bool;
+    fn deref(&self) -> &bool {
+        &self.0
+    }
+}
+impl ::std::convert::From<StrictSigningKeyUsage> for bool {
+    fn from(value: StrictSigningKeyUsage) -> Self {
+        value.0
+    }
+}
+impl ::std::convert::From<&StrictSigningKeyUsage> for StrictSigningKeyUsage {
+    fn from(value: &StrictSigningKeyUsage) -> Self {
+        value.clone()
+    }
+}
+impl ::std::convert::From<bool> for StrictSigningKeyUsage {
+    fn from(value: bool) -> Self {
+        Self(value)
+    }
+}
+impl ::std::str::FromStr for StrictSigningKeyUsage {
+    type Err = <bool as ::std::str::FromStr>::Err;
+    fn from_str(value: &str) -> ::std::result::Result<Self, Self::Err> {
+        Ok(Self(value.parse()?))
+    }
+}
+impl ::std::convert::TryFrom<&str> for StrictSigningKeyUsage {
+    type Error = <bool as ::std::str::FromStr>::Err;
+    fn try_from(value: &str) -> ::std::result::Result<Self, Self::Error> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<&String> for StrictSigningKeyUsage {
+    type Error = <bool as ::std::str::FromStr>::Err;
+    fn try_from(value: &String) -> ::std::result::Result<Self, Self::Error> {
+        value.parse()
+    }
+}
+impl ::std::convert::TryFrom<String> for StrictSigningKeyUsage {
+    type Error = <bool as ::std::str::FromStr>::Err;
+    fn try_from(value: String) -> ::std::result::Result<Self, Self::Error> {
+        value.parse()
+    }
+}
+impl ::std::fmt::Display for StrictSigningKeyUsage {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 ///A list of arbitrary strings.
 ///
 /// <details><summary>JSON schema</summary>
@@ -2886,6 +3271,54 @@ impl ::std::str::FromStr for Subject {
     }
 }
 impl ::std::fmt::Display for Subject {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+///Identity of the system account.
+///
+/// <details><summary>JSON schema</summary>
+///
+/// ```json
+///{
+///  "description": "Identity of the system account.",
+///  "type": "string"
+///}
+/// ```
+/// </details>
+#[derive(
+    ::serde::Deserialize, ::serde::Serialize, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd,
+)]
+#[serde(transparent)]
+pub struct SystemAccount(pub ::std::string::String);
+impl ::std::ops::Deref for SystemAccount {
+    type Target = ::std::string::String;
+    fn deref(&self) -> &::std::string::String {
+        &self.0
+    }
+}
+impl ::std::convert::From<SystemAccount> for ::std::string::String {
+    fn from(value: SystemAccount) -> Self {
+        value.0
+    }
+}
+impl ::std::convert::From<&SystemAccount> for SystemAccount {
+    fn from(value: &SystemAccount) -> Self {
+        value.clone()
+    }
+}
+impl ::std::convert::From<::std::string::String> for SystemAccount {
+    fn from(value: ::std::string::String) -> Self {
+        Self(value)
+    }
+}
+impl ::std::str::FromStr for SystemAccount {
+    type Err = ::std::convert::Infallible;
+    fn from_str(value: &str) -> ::std::result::Result<Self, Self::Err> {
+        Ok(Self(value.to_string()))
+    }
+}
+impl ::std::fmt::Display for SystemAccount {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         self.0.fmt(f)
     }
@@ -5067,6 +5500,184 @@ pub mod builder {
         }
     }
     #[derive(Clone, Debug)]
+    pub struct Operator {
+        account_server_url: ::std::result::Result<
+            ::std::option::Option<super::AccountServerUrl>,
+            ::std::string::String,
+        >,
+        assert_server_version: ::std::result::Result<
+            ::std::option::Option<super::AssertServerVersion>,
+            ::std::string::String,
+        >,
+        operator_service_urls: ::std::result::Result<
+            ::std::option::Option<super::OperatorServiceUrLs>,
+            ::std::string::String,
+        >,
+        signing_keys:
+            ::std::result::Result<::std::option::Option<super::SigningKeys>, ::std::string::String>,
+        strict_signing_key_usage: ::std::result::Result<
+            ::std::option::Option<super::StrictSigningKeyUsage>,
+            ::std::string::String,
+        >,
+        system_account: ::std::result::Result<
+            ::std::option::Option<super::SystemAccount>,
+            ::std::string::String,
+        >,
+        tags: ::std::result::Result<::std::option::Option<super::TagList>, ::std::string::String>,
+        type_: ::std::result::Result<super::OperatorType, ::std::string::String>,
+        version: ::std::result::Result<i64, ::std::string::String>,
+    }
+    impl ::std::default::Default for Operator {
+        fn default() -> Self {
+            Self {
+                account_server_url: Ok(Default::default()),
+                assert_server_version: Ok(Default::default()),
+                operator_service_urls: Ok(Default::default()),
+                signing_keys: Ok(Default::default()),
+                strict_signing_key_usage: Ok(Default::default()),
+                system_account: Ok(Default::default()),
+                tags: Ok(Default::default()),
+                type_: Ok(super::defaults::operator_type()),
+                version: Ok(super::defaults::default_u64::<i64, 2>()),
+            }
+        }
+    }
+    impl Operator {
+        pub fn account_server_url<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::AccountServerUrl>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.account_server_url = value.try_into().map_err(|e| {
+                format!(
+                    "error converting supplied value for account_server_url: {}",
+                    e
+                )
+            });
+            self
+        }
+        pub fn assert_server_version<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::AssertServerVersion>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.assert_server_version = value.try_into().map_err(|e| {
+                format!(
+                    "error converting supplied value for assert_server_version: {}",
+                    e
+                )
+            });
+            self
+        }
+        pub fn operator_service_urls<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::OperatorServiceUrLs>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.operator_service_urls = value.try_into().map_err(|e| {
+                format!(
+                    "error converting supplied value for operator_service_urls: {}",
+                    e
+                )
+            });
+            self
+        }
+        pub fn signing_keys<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::SigningKeys>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.signing_keys = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for signing_keys: {}", e));
+            self
+        }
+        pub fn strict_signing_key_usage<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::StrictSigningKeyUsage>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.strict_signing_key_usage = value.try_into().map_err(|e| {
+                format!(
+                    "error converting supplied value for strict_signing_key_usage: {}",
+                    e
+                )
+            });
+            self
+        }
+        pub fn system_account<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::SystemAccount>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.system_account = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for system_account: {}", e));
+            self
+        }
+        pub fn tags<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<::std::option::Option<super::TagList>>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.tags = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for tags: {}", e));
+            self
+        }
+        pub fn type_<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<super::OperatorType>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.type_ = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for type_: {}", e));
+            self
+        }
+        pub fn version<T>(mut self, value: T) -> Self
+        where
+            T: ::std::convert::TryInto<i64>,
+            T::Error: ::std::fmt::Display,
+        {
+            self.version = value
+                .try_into()
+                .map_err(|e| format!("error converting supplied value for version: {}", e));
+            self
+        }
+    }
+    impl ::std::convert::TryFrom<Operator> for super::Operator {
+        type Error = super::error::ConversionError;
+        fn try_from(value: Operator) -> ::std::result::Result<Self, super::error::ConversionError> {
+            Ok(Self {
+                account_server_url: value.account_server_url?,
+                assert_server_version: value.assert_server_version?,
+                operator_service_urls: value.operator_service_urls?,
+                signing_keys: value.signing_keys?,
+                strict_signing_key_usage: value.strict_signing_key_usage?,
+                system_account: value.system_account?,
+                tags: value.tags?,
+                type_: value.type_?,
+                version: value.version?,
+            })
+        }
+    }
+    impl ::std::convert::From<super::Operator> for Operator {
+        fn from(value: super::Operator) -> Self {
+            Self {
+                account_server_url: Ok(value.account_server_url),
+                assert_server_version: Ok(value.assert_server_version),
+                operator_service_urls: Ok(value.operator_service_urls),
+                signing_keys: Ok(value.signing_keys),
+                strict_signing_key_usage: Ok(value.strict_signing_key_usage),
+                system_account: Ok(value.system_account),
+                tags: Ok(value.tags),
+                type_: Ok(value.type_),
+                version: Ok(value.version),
+            }
+        }
+    }
+    #[derive(Clone, Debug)]
     pub struct OperatorLimits {
         conn: ::std::result::Result<i64, ::std::string::String>,
         consumer: ::std::result::Result<i64, ::std::string::String>,
@@ -6365,6 +6976,9 @@ pub mod defaults {
     }
     pub(super) fn activation_type() -> super::ActivationType {
         super::ActivationType::Activation
+    }
+    pub(super) fn operator_type() -> super::OperatorType {
+        super::OperatorType::Operator
     }
     pub(super) fn user_type() -> super::UserType {
         super::UserType::User

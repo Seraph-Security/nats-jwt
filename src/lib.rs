@@ -2,7 +2,7 @@
 //!
 //! **NOTE** - This is still a work in progress and will be published to crates.io once it's ready.
 //!
-//! Supports generating JWTs for Account, User and Activation claims.
+//! Supports generating JWTs for Operator, Account, User and Activation claims.
 //!
 //! ## Example
 //!
@@ -248,6 +248,7 @@ mod tests {
             }
             Claims::User(_) => panic!("Expected Account, was User"),
             Claims::Activation(_) => panic!("Expected Account, was Activation"),
+            Claims::Operator(_) => panic!("Expected Account, was Operator"),
         }
 
         let operator_signing_key = KeyPair::new_operator();
