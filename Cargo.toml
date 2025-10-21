@@ -7,6 +7,7 @@ exclude = [".gitlab-ci.yml"]
 authors = ["Ryan Sanche <ryan@rj45.ca>", "Steve Graham <stgraham2000@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/Seraph-Security/nats-jwt"
 
 [dependencies]
 data-encoding = "2.6.0"
