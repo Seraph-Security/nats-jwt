@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/Seraph-Security/nats-jwt/compare/v0.1.0...v0.1.1) - 2025-10-21
+
+### Other
+
+- Fix #29 - add link to repository in Cargo.toml so crates.io has reference back to repo
+
 ## [0.0.7](https://github.com/Seraph-Security/nats-jwt/compare/v0.0.6...v0.0.7) - 2025-01-07
 
 ### Other
